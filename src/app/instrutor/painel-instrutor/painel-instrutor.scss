@@ -1,0 +1,130 @@
+
+.painel-instrutor{
+  padding: 32px;
+  background: #f7f9fa;
+  min-height: 100vh;
+}
+.resumo {
+ margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.card-resumo {
+  background: #f5f7fa;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+  width: 200px;
+}
+
+.card-resumo,
+.card-curso {
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.secao-cursos {
+  margin-top: 40px;
+
+}
+
+.cursos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.card-curso {
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.status {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.andamento {
+  background: #fff3cd;
+  color: #856404;
+}
+
+
+.progresso {
+  height: 4px;
+  background: #ececec;
+  border-radius: 2px;
+  margin: 8px 0;
+}
+
+.progresso-barra {
+  height: 100%;
+  background: #5624d0;
+}
+
+
+.painel-cabecalho {
+    display: flex; /* Para alinhar o título e o botão lado a lado */
+    justify-content: space-between; /* Para empurrar um para a esquerda e o outro para a direita */
+    align-items: center; /* Para centralizar verticalmente */
+    margin-bottom: 24px; /* Espaço entre o cabeçalho e a seção de resumo */
+}
+
+.btn-primary {
+    background: #5624d0; /* Cor principal, combinando com a barra de progresso */
+    color: #ffffff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #461f9e; /* Um pouco mais escuro ao passar o mouse */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+h1 {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+p {
+  color: #6a6f73;
+  font-size: 14px;
+}
+
+

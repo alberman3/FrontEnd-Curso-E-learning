@@ -13,6 +13,22 @@ export const serverRoutes: ServerRoute[] = [
     path: 'cadastro',
     renderMode: RenderMode.Server
   },
+   {
+    path: 'cadastro-curso',
+    renderMode: RenderMode.Server
+  },
+   {
+    path: 'cadastro-aula',
+    renderMode: RenderMode.Server
+  },
+   {
+    path: 'cadastro-modulo',
+    renderMode: RenderMode.Server
+  },
+  {
+    path: 'avaliar-curso',
+    renderMode: RenderMode.Server
+  },
   {
     path: 'cursos/**',
     renderMode: RenderMode.Server
