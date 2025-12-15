@@ -1,1 +1,40 @@
-<p>avaliacao-curso works!</p>
+<div class="home-container">
+
+  <div class="hero">
+    <h1>Plataforma E-learning</h1>
+    <p>Aprenda, ensine e acompanhe seu progresso em um só lugar.</p>
+  </div>
+
+  <div class="card">
+    <h2>Avaliar do Curso</h2>
+    <p>Dê uma nota</p>
+
+    <div class="star-rating">
+      <span class="star" (click)="setRating(1)" [class.filled]="rating >= 1">&#9733;</span>
+      <span class="star" (click)="setRating(2)" [class.filled]="rating >= 2">&#9733;</span>
+      <span class="star" (click)="setRating(3)" [class.filled]="rating >= 3">&#9733;</span>
+      <span class="star" (click)="setRating(4)" [class.filled]="rating >= 4">&#9733;</span>
+      <span class="star" (click)="setRating(5)" [class.filled]="rating >= 5">&#9733;</span>
+    </div>
+
+    <button
+      mat-raised-button
+      class="rounded-btn"
+      color="primary">
+      Confirmar
+    </button>
+
+    <button
+      mat-raised-button
+      class="rounded-btn"
+      color="primary">
+      Cancelar
+    </button>
+  </div>
+
+  <footer class="footer">
+    © Plataforma E-learning
+  </footer>
+
+</div>
+
