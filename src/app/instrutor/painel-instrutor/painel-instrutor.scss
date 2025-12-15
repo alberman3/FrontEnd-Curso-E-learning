@@ -19,6 +19,11 @@
   width: 200px;
 }
 
+.acoes-cabecalho {
+    display: flex;
+    gap: 10px; /* Espaço entre os botões */
+}
+
 .card-resumo,
 .card-curso {
   background: #ffffff;
