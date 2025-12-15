@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { PainelCursos } from './painel-cursos/painel-cursos';
+import { PainelCursos } from '../core/painel-cursos/painel-cursos';
 import { PainelCurso} from './painel-curso/painel-curso';
 import { CadastroCurso } from './cadastro-curso/cadastro-curso';
 import { CadastroModulo} from './cadastro-modulo/cadastro-modulo';

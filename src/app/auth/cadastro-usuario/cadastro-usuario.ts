@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-
+import { Router } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { AuthService } from '../services/auth-services';
 
 @Component({
   selector: 'app-cadastro-usuario',
@@ -17,24 +18,24 @@ import { MatSelectModule } from '@angular/material/select';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatSelectModule
+    MatSelectModule,
+    MatSnackBarModule
   ],
   templateUrl: './cadastro-usuario.html',
   styleUrl: './cadastro-usuario.scss',
 })
 export class CadastroUsuario {
-
   form: FormGroup;
-
-  // IMPORTANTE: Barra no início da URL para o proxy funcionar
-  private readonly API_URL = '/auth/register';
+  isLoading = false;
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient
+    private authService: AuthService,
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {
     this.form = this.fb.group({
-      name: ['', Validators.required],
+      name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       role: ['', Validators.required]
@@ -43,44 +44,38 @@ export class CadastroUsuario {
 
   onSubmit(): void {
     if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
 
-    const formValue = this.form.value;
+    this.isLoading = true;
 
-    // Transforma o payload para o formato esperado pelo backend
     const payload = {
-      name: formValue.name,
-      login: formValue.email,  // Backend espera "login", não "email"
-      password: formValue.password,
-      role: formValue.role
+      name: this.form.value.name,
+      login: this.form.value.email,
+      password: this.form.value.password,
+      role: this.form.value.role
     };
 
-    console.log('Enviando requisição para:', this.API_URL);
-    console.log('Payload:', payload);
+    this.authService.register(payload).subscribe({
+      next: (response) => {
+        this.snackBar.open(response.message || 'Cadastro realizado com sucesso!', 'OK', {
+          duration: 3000
+        });
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        const errorMessage = err.error?.message || 'Erro ao cadastrar usuário';
+        this.snackBar.open(errorMessage, 'Fechar', {
+          duration: 5000,
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
 
-    this.http.post(this.API_URL, payload)
-      .subscribe({
-        next: (response: any) => {
-          console.log('Resposta do servidor:', response);
-          alert(response.message);
-          this.form.reset();
-        },
-        error: (err) => {
-          console.error('Erro completo:', err);
-          console.error('Status:', err.status);
-          console.error('Mensagem:', err.error);
-
-          let mensagem = 'Erro ao cadastrar usuário';
-
-          if (err.status === 400 && err.error?.message) {
-            mensagem = 'Email já cadastrado ou dados inválidos!';
-          } else if (err.status === 0) {
-            mensagem = 'Erro de conexão com o servidor. Verifique se o backend está rodando.';
-          }
-
-          alert(mensagem);
-        }
-      });
+  goToLogin(): void {
+    this.router.navigate(['/login']);
   }
 }

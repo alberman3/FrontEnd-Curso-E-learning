@@ -1,0 +1,48 @@
+<mat-toolbar color="primary" class="toolbar">
+  <div class="toolbar-content">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Pesquisar curso</mat-label>
+      <input
+        matInput
+        placeholder="Digite o nome do curso"
+        #searchInput
+        (input)="filterCursos(searchInput.value)">
+    </mat-form-field>
+  </div>
+</mat-toolbar>
+
+<div class="content-container">
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Carregando cursos...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error-container">
+      <p>{{ error() }}</p>
+      <button mat-raised-button color="primary" (click)="loadCursos()">
+        Tentar novamente
+      </button>
+    </div>
+  }
+
+  @if (!isLoading() && !error()) {
+    <div class="cards-container">
+      @for (curso of cursosFiltered(); track curso.id) {
+        <mat-card class="course-card" (click)="goToCourse(curso.id)">
+          <mat-card-header>
+            <mat-card-title>{{ curso.title }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ curso.description }}</p>
+            <p class="workload">Carga horária: {{ curso.workload }}h</p>
+          </mat-card-content>
+        </mat-card>
+      } @empty {
+        <p class="no-results">Nenhum curso encontrado</p>
+      }
+    </div>
+  }
+</div>

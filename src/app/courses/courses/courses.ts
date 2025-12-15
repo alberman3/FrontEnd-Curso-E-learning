@@ -5,7 +5,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { Course } from '../model/course';
-import { CoursesServices } from '../services/courses-services';
+import { CoursesService } from '../services/courses-services';
 // CORREÇÃO 1: Consolidação e importação do 'Observable' e dos operadores necessários.
 import { catchError, Observable, of } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -42,7 +42,7 @@ export class Courses implements OnInit {
   displayedColumns: string[] = ['name', 'category'];
 
   constructor(
-    private courseService: CoursesServices,
+    private courseService: CoursesService,
     public dialog: MatDialog // Serviço injetado para abrir o Dialog
   ) {
     this.courses$ = this.courseService.list()
