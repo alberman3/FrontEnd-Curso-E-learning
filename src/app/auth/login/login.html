@@ -9,26 +9,48 @@
     <h2>Login</h2>
     <p>Digite os dados abaixo</p>
 
-    <div class="form-group">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Email</mat-label>
-        <input matInput type="email" placeholder="Digite seu email">
-      </mat-form-field>
-    </div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-    <div class="form-group">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Senha</mat-label>
-        <input matInput type="password" placeholder="Digite sua senha">
-      </mat-form-field>
-    </div>
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            type="email"
+            formControlName="email"
+            placeholder="Digite seu email">
 
-    <button
-      mat-raised-button
-      class="rounded-btn"
-      color="primary">
-      Entrar
-    </button>
+          <mat-error *ngIf="form.get('email')?.invalid">
+            Email inválido
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Senha</mat-label>
+          <input
+            matInput
+            type="password"
+            formControlName="password"
+            placeholder="Digite sua senha">
+
+          <mat-error *ngIf="form.get('password')?.invalid">
+            Senha obrigatória
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <button
+        mat-raised-button
+        class="rounded-btn"
+        color="primary"
+        type="submit"
+        [disabled]="form.invalid">
+        Entrar
+      </button>
+
+    </form>
   </div>
 
   <footer class="footer">

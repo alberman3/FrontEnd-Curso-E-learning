@@ -10,7 +10,7 @@ import { first, delay, tap } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class CoursesServices {
-  private readonly API = 'assets/courses.json';
+  private readonly API = 'api/courses';
 
   // O TypeScript agora reconhece 'HttpClient'
   constructor(private httpClient: HttpClient) { }
