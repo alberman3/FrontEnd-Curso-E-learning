@@ -33,6 +33,10 @@ export const serverRoutes: ServerRoute[] = [
     path: 'cursos/**',
     renderMode: RenderMode.Server
   },
+   {
+    path: 'painel-curso',
+    renderMode: RenderMode.Server
+  },
   {
     path: '**',
     renderMode: RenderMode.Server

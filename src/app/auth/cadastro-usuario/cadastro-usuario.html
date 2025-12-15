@@ -2,67 +2,31 @@
 
   <div class="hero">
     <h1>Plataforma E-learning</h1>
-    <p>Crie sua conta para começar a aprender ou ensinar.</p>
+    <p>Aprenda, ensine e acompanhe seu progresso em um só lugar.</p>
   </div>
 
   <div class="card">
     <h2>Cadastro</h2>
-    <p>Preencha os dados abaixo</p>
+    <p>Digite os dados abaixo</p>
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" placeholder="Digite seu email">
+      </mat-form-field>
+    </div>
 
-      <div class="form-group">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Nome</mat-label>
-          <input matInput formControlName="name" placeholder="Digite seu nome">
-          <mat-error *ngIf="form.get('name')?.invalid">
-            Nome é obrigatório
-          </mat-error>
-        </mat-form-field>
-      </div>
+    <div class="form-group">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Senha</mat-label>
+        <input matInput type="password" placeholder="Digite sua senha">
+      </mat-form-field>
+    </div>
 
-      <div class="form-group">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput type="email" formControlName="email" placeholder="Digite seu email">
-          <mat-error *ngIf="form.get('email')?.invalid">
-            Email inválido
-          </mat-error>
-        </mat-form-field>
-      </div>
+    <button class = "btn-primary" onclick="window.location.href='/login'">
 
-      <div class="form-group">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Senha</mat-label>
-          <input matInput type="password" formControlName="password" placeholder="Digite sua senha">
-          <mat-error *ngIf="form.get('password')?.invalid">
-            Mínimo de 6 caracteres
-          </mat-error>
-        </mat-form-field>
-      </div>
-
-      <div class="form-group">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Tipo de usuário</mat-label>
-          <mat-select formControlName="role">
-            <mat-option value="STUDENT">Aluno</mat-option>
-            <mat-option value="INSTRUCTOR">Instrutor</mat-option>
-          </mat-select>
-          <mat-error *ngIf="form.get('role')?.invalid">
-            Selecione um perfil
-          </mat-error>
-        </mat-form-field>
-      </div>
-
-      <button
-        mat-raised-button
-        color="primary"
-        class="rounded-btn full-width"
-        [disabled]="form.invalid">
-        Cadastrar
-      </button>
-
-    </form>
+      Cadastre-se
+    </button>
   </div>
 
   <footer class="footer">

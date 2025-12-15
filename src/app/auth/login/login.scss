@@ -7,6 +7,18 @@
   padding: 60px 20px;
 }
 
+.btn-primary {
+    background: #5624d0; /* Cor principal, combinando com a barra de progresso */
+    color: #ffffff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
 .hero {
   text-align: center;
   margin-bottom: 60px;

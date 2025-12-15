@@ -10,6 +10,7 @@ import { TelaInicial } from './core/tela-inicial/tela-inicial';
 import { PainelAluno } from './aluno/painel-aluno/painel-aluno';
 import { PainelInstrutor } from './instrutor/painel-instrutor/painel-instrutor';
 import { AvaliacaoCurso } from './courses/avaliacao-curso/avaliacao-curso';
+import { PainelCurso } from './courses/painel-curso/painel-curso';
 
 
 export const routes: Routes = [
@@ -31,6 +32,7 @@ export const routes: Routes = [
   { path: 'cadastro-aula', component: CadastroAula },
   { path: 'cadastro-modulo', component: CadastroModulo},
   { path: 'avaliar-curso', component: AvaliacaoCurso },
+  { path: 'painel-curso', component: PainelCurso },
 
   // Cursos (lazy loading)
   {
