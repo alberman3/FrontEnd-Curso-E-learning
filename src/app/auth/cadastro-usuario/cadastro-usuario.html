@@ -1,36 +1,84 @@
 <div class="home-container">
-
   <div class="hero">
     <h1>Plataforma E-learning</h1>
-    <p>Aprenda, ensine e acompanhe seu progresso em um só lugar.</p>
+    <p>Crie sua conta para começar a aprender ou ensinar.</p>
   </div>
 
   <div class="card">
     <h2>Cadastro</h2>
-    <p>Digite os dados abaixo</p>
+    <p>Preencha os dados abaixo</p>
 
-    <div class="form-group">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Email</mat-label>
-        <input matInput type="email" placeholder="Digite seu email">
-      </mat-form-field>
-    </div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="name" placeholder="Digite seu nome completo">
+          <mat-error *ngIf="form.get('name')?.hasError('required')">
+            Nome é obrigatório
+          </mat-error>
+          <mat-error *ngIf="form.get('name')?.hasError('minlength')">
+            Nome deve ter no mínimo 3 caracteres
+          </mat-error>
+        </mat-form-field>
+      </div>
 
-    <div class="form-group">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Senha</mat-label>
-        <input matInput type="password" placeholder="Digite sua senha">
-      </mat-form-field>
-    </div>
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" placeholder="seu@email.com">
+          <mat-error *ngIf="form.get('email')?.hasError('required')">
+            Email é obrigatório
+          </mat-error>
+          <mat-error *ngIf="form.get('email')?.hasError('email')">
+            Email inválido
+          </mat-error>
+        </mat-form-field>
+      </div>
 
-    <button class = "btn-primary" onclick="window.location.href='/login'">
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Senha</mat-label>
+          <input matInput type="password" formControlName="password" placeholder="Mínimo 6 caracteres">
+          <mat-error *ngIf="form.get('password')?.hasError('required')">
+            Senha é obrigatória
+          </mat-error>
+          <mat-error *ngIf="form.get('password')?.hasError('minlength')">
+            Senha deve ter no mínimo 6 caracteres
+          </mat-error>
+        </mat-form-field>
+      </div>
 
-      Cadastre-se
-    </button>
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tipo de usuário</mat-label>
+          <mat-select formControlName="role">
+            <mat-option value="STUDENT">Aluno</mat-option>
+            <mat-option value="INSTRUCTOR">Instrutor</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('role')?.invalid">
+            Selecione um perfil
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <button
+        mat-raised-button
+        color="primary"
+        class="rounded-btn full-width"
+        type="submit"
+        [disabled]="form.invalid || isLoading">
+        {{ isLoading ? 'Cadastrando...' : 'Cadastrar' }}
+      </button>
+
+      <button
+        mat-button
+        type="button"
+        class="full-width"
+        (click)="goToLogin()">
+        Já tem uma conta? Faça login
+      </button>
+    </form>
   </div>
 
-  <footer class="footer">
-    © Plataforma E-learning
-  </footer>
-
+  <footer class="footer">© Plataforma E-learning</footer>
 </div>

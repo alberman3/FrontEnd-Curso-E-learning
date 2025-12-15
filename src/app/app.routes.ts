@@ -1,49 +1,30 @@
 import { Routes } from '@angular/router';
-import { Courses } from './courses/courses/courses';
-import { Course } from './courses/model/course';
-import { CadastroCurso } from './courses/cadastro-curso/cadastro-curso';
-import { CadastroAula } from './courses/cadastro-aula/cadastro-aula';
-import { CadastroModulo } from './courses/cadastro-modulo/cadastro-modulo';
 import { Login } from './auth/login/login';
-import { CadastroUsuario} from './auth/cadastro-usuario/cadastro-usuario';
+import { CadastroUsuario } from './auth/cadastro-usuario/cadastro-usuario';
 import { TelaInicial } from './core/tela-inicial/tela-inicial';
 import { PainelAluno } from './aluno/painel-aluno/painel-aluno';
 import { PainelInstrutor } from './instrutor/painel-instrutor/painel-instrutor';
+import { authGuard, studentGuard, instructorGuard } from './auth/guards/auth.guard';
+import { CadastroCurso } from './courses/cadastro-curso/cadastro-curso';
+import { CadastroAula } from './courses/cadastro-aula/cadastro-aula';
+import { CadastroModulo } from './courses/cadastro-modulo/cadastro-modulo';
 import { AvaliacaoCurso } from './courses/avaliacao-curso/avaliacao-curso';
-import { PainelCurso } from './courses/painel-curso/painel-curso';
-import { PainelCursos } from './courses/painel-cursos/painel-cursos';
 
 
 export const routes: Routes = [
-
-  // Tela inicial
   { path: '', component: TelaInicial },
-
-  // Autenticação
   { path: 'login', component: Login },
   { path: 'cadastro', component: CadastroUsuario },
-
-  // Painéis principais
-  { path: 'aluno', component: PainelAluno },
-  { path: 'instrutor', component: PainelInstrutor },
-
-
-   // Painéis de curso
-  { path: 'cadastro-curso', component: CadastroCurso },
-  { path: 'cadastro-aula', component: CadastroAula },
-  { path: 'cadastro-modulo', component: CadastroModulo},
-  { path: 'avaliar-curso', component: AvaliacaoCurso },
-  { path: 'painel-curso', component: PainelCurso },
-  { path: 'painel-cursos', component: PainelCursos},
-
-  // Cursos (lazy loading)
+  { path: 'aluno', component: PainelAluno, canActivate: [authGuard, studentGuard] },
+  { path: 'instrutor', component: PainelInstrutor, canActivate: [authGuard, instructorGuard] },
+  { path: 'cadastro-curso', component: CadastroCurso, canActivate: [authGuard, instructorGuard] },
+  { path: 'cadastro-aula', component: CadastroAula, canActivate: [authGuard, instructorGuard] },
+  { path: 'cadastro-modulo', component: CadastroModulo, canActivate: [authGuard, instructorGuard] },
+  { path: 'avaliar-curso', component: AvaliacaoCurso, canActivate: [authGuard] },
   {
     path: 'cursos',
-    loadChildren: () =>
-      import('./courses/courses-module')
-        .then(m => m.CoursesModule)
+    canActivate: [authGuard],
+    loadChildren: () => import('./courses/courses-module').then(m => m.CoursesModule)
   },
-
-  // Fallback
   { path: '**', redirectTo: '' }
 ];
