@@ -11,6 +11,7 @@ import { PainelAluno } from './aluno/painel-aluno/painel-aluno';
 import { PainelInstrutor } from './instrutor/painel-instrutor/painel-instrutor';
 import { AvaliacaoCurso } from './courses/avaliacao-curso/avaliacao-curso';
 import { PainelCurso } from './courses/painel-curso/painel-curso';
+import { PainelCursos } from './courses/painel-cursos/painel-cursos';
 
 
 export const routes: Routes = [
@@ -33,6 +34,7 @@ export const routes: Routes = [
   { path: 'cadastro-modulo', component: CadastroModulo},
   { path: 'avaliar-curso', component: AvaliacaoCurso },
   { path: 'painel-curso', component: PainelCurso },
+  { path: 'painel-cursos', component: PainelCursos},
 
   // Cursos (lazy loading)
   {
