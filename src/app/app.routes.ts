@@ -23,7 +23,6 @@ export const routes: Routes = [
   { path: 'avaliar-curso', component: AvaliacaoCurso, canActivate: [authGuard] },
   {
     path: 'cursos',
-    canActivate: [authGuard],
     loadChildren: () => import('./courses/courses-module').then(m => m.CoursesModule)
   },
   { path: '**', redirectTo: '' }

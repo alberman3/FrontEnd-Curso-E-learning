@@ -1,38 +1,72 @@
-<div class="home-container">
+<app-navbar></app-navbar>
 
-  <div class="hero">
-    <h1>Plataforma E-learning</h1>
-    <p>Aprenda, ensine e acompanhe seu progresso em um só lugar.</p>
-  </div>
+<section class="hero">
+  <div class="hero-content">
+    <h1>Aprenda e Ensine com Qualidade</h1>
+    <p>A plataforma completa para alunos e instrutores evoluírem juntos</p>
 
-  <div class="cards-container">
+    <div class="hero-actions">
 
-    <div class="card">
-      <h2>Já tem uma conta?</h2>
-      <p>Acesse sua área para continuar seus cursos.</p>
-      <button class = "btn-primary" onclick="window.location.href='/login'">
+      @if (!isLoggedIn()) {
+        <button mat-raised-button color="primary" routerLink="/cadastro">
+          Criar Conta Grátis
+        </button>
 
-        Login
+        <button mat-stroked-button routerLink="/login">
+          Já tenho conta
+        </button>
+      }
 
+      @if (isLoggedIn() && isStudent()) {
+        <button mat-raised-button color="primary" routerLink="/aluno">
+          Ir para Meu Painel
+        </button>
+      }
+
+      @if (isLoggedIn() && isInstructor()) {
+        <button mat-raised-button color="primary" routerLink="/instrutor">
+          Ir para Painel do Instrutor
+        </button>
+      }
+
+      <button mat-stroked-button routerLink="/cursos">
+        Explorar Cursos
       </button>
+
+    </div>
+  </div>
+</section>
+
+<section class="features">
+  <div class="features-grid">
+
+    <div class="feature">
+      <mat-icon>school</mat-icon>
+      <h3>Cursos Atualizados</h3>
+      <p>Conteúdo prático criado por especialistas</p>
     </div>
 
-    <div class="card">
-      <h2>Novo por aqui?</h2>
-      <p>Cadastre-se como aluno ou instrutor.</p>
-      <button class = "btn-primary" onclick="window.location.href='/cadastro'">
+    <div class="feature">
+      <mat-icon>schedule</mat-icon>
+      <h3>No Seu Ritmo</h3>
+      <p>Aprenda quando e onde quiser</p>
+    </div>
 
-        Cadastre-se
+    <div class="feature">
+      <mat-icon>verified</mat-icon>
+      <h3>Certificados</h3>
+      <p>Comprove suas habilidades</p>
+    </div>
 
-      </button>
-
-
+    <div class="feature">
+      <mat-icon>support_agent</mat-icon>
+      <h3>Suporte</h3>
+      <p>Instrutores disponíveis para ajudar</p>
     </div>
 
   </div>
+</section>
 
-  <footer class="footer">
-    © Plataforma E-learning
-  </footer>
-
-</div>
+<footer class="footer">
+  © 2024 Plataforma E-learning
+</footer>
