@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../services/auth-services';
 
 @Component({
@@ -18,8 +19,9 @@ import { AuthService } from '../services/auth-services';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatSnackBarModule,
     MatSelectModule,
-    MatSnackBarModule
+    MatProgressSpinnerModule
   ],
   templateUrl: './cadastro-usuario.html',
   styleUrl: './cadastro-usuario.scss',
@@ -32,13 +34,14 @@ export class CadastroUsuario {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef // ADICIONADO para resolver NG0100
   ) {
     this.form = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
+      name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      role: ['', Validators.required]
+      role: ['STUDENT', Validators.required]
     });
   }
 
@@ -48,7 +51,11 @@ export class CadastroUsuario {
       return;
     }
 
-    this.isLoading = true;
+    // Usar setTimeout para evitar o erro NG0100
+    setTimeout(() => {
+      this.isLoading = true;
+      this.cdr.detectChanges();
+    });
 
     const payload = {
       name: this.form.value.name,
@@ -58,15 +65,25 @@ export class CadastroUsuario {
     };
 
     this.authService.register(payload).subscribe({
-      next: (response) => {
-        this.snackBar.open(response.message || 'Cadastro realizado com sucesso!', 'OK', {
+      next: () => {
+        this.isLoading = false;
+        this.snackBar.open('Cadastro realizado com sucesso! Faça login.', 'OK', {
           duration: 3000
         });
         this.router.navigate(['/login']);
       },
       error: (err) => {
         this.isLoading = false;
-        const errorMessage = err.error?.message || 'Erro ao cadastrar usuário';
+        this.cdr.detectChanges(); // FORÇAR detecção após erro
+
+        let errorMessage = 'Erro ao fazer cadastro. Tente novamente.';
+
+        if (err.status === 500) {
+          errorMessage = 'Erro no servidor. Verifique se o backend está rodando.';
+        } else if (err.error?.message) {
+          errorMessage = err.error.message;
+        }
+
         this.snackBar.open(errorMessage, 'Fechar', {
           duration: 5000,
           panelClass: ['error-snackbar']

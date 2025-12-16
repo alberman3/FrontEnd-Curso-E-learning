@@ -1,70 +1,125 @@
-import { Component, computed } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { NavbarComponent } from '../../shared/components/navbar.component';
 import { AuthService } from '../../auth/services/auth-services';
-import { PainelCursos } from '../painel-cursos/painel-cursos';
 
 @Component({
   selector: 'app-tela-inicial',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, PainelCursos],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    NavbarComponent
+  ],
   template: `
-    <div class="home-container">
-      <div class="hero">
-        <h1>Plataforma E-learning</h1>
-        <p>Aprenda, ensine e acompanhe seu progresso em um só lugar.</p>
-      </div>
+    <!-- Navbar -->
+    <app-navbar></app-navbar>
 
-      @if (!isLoggedIn()) {
-        <div class="cards-container">
-          <div class="card">
-            <h2>Já tem uma conta?</h2>
-            <p>Acesse sua área para continuar seus cursos.</p>
-            <button mat-raised-button color="primary" routerLink="/login">Login</button>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Bem-vindo à Plataforma E-learning</h1>
+        <p>Aprenda novas habilidades com os melhores instrutores</p>
+
+        @if (!authService.isLoggedIn()) {
+          <div class="hero-actions">
+            <button mat-raised-button color="primary" routerLink="/cadastro">
+              <mat-icon>person_add</mat-icon>
+              Criar Conta Grátis
+            </button>
+            <button mat-stroked-button routerLink="/cursos">
+              <mat-icon>explore</mat-icon>
+              Explorar Cursos
+            </button>
           </div>
-
-          <div class="card">
-            <h2>Novo por aqui?</h2>
-            <p>Cadastre-se como aluno ou instrutor.</p>
-            <button mat-raised-button color="accent" routerLink="/cadastro">Cadastre-se</button>
-          </div>
-        </div>
-      }
-
-      @if (isLoggedIn()) {
-        <div class="logged-panel">
-          <div class="user-actions">
-            @if (isInstructor()) {
-              <button mat-raised-button color="primary" routerLink="/instrutor">
-                Painel Instrutor
-              </button>
-            }
-            @if (isStudent()) {
+        } @else {
+          <div class="hero-actions">
+            @if (authService.isStudent()) {
               <button mat-raised-button color="primary" routerLink="/aluno">
-                Painel Aluno
+                <mat-icon>dashboard</mat-icon>
+                Ir para Meu Painel
               </button>
             }
-            <button mat-raised-button color="warn" (click)="logout()">Sair</button>
+            @if (authService.isInstructor()) {
+              <button mat-raised-button color="primary" routerLink="/instrutor">
+                <mat-icon>dashboard</mat-icon>
+                Ir para Painel Instrutor
+              </button>
+            }
+            <button mat-stroked-button routerLink="/cursos">
+              <mat-icon>explore</mat-icon>
+              Explorar Cursos
+            </button>
           </div>
+        }
+      </div>
+    </section>
 
-          <app-painel-cursos></app-painel-cursos>
+    <!-- Features Section -->
+    <section class="features">
+      <div class="container">
+        <h2>Por que escolher nossa plataforma?</h2>
+        <div class="features-grid">
+          <mat-card class="feature-card">
+            <mat-icon>school</mat-icon>
+            <h3>Cursos de Qualidade</h3>
+            <p>Aprenda com instrutores experientes e conteúdo atualizado</p>
+          </mat-card>
+
+          <mat-card class="feature-card">
+            <mat-icon>schedule</mat-icon>
+            <h3>Aprenda no Seu Ritmo</h3>
+            <p>Acesse os cursos quando e onde quiser, sem pressa</p>
+          </mat-card>
+
+          <mat-card class="feature-card">
+            <mat-icon>verified</mat-icon>
+            <h3>Certificados</h3>
+            <p>Receba certificados ao concluir seus cursos</p>
+          </mat-card>
+
+          <mat-card class="feature-card">
+            <mat-icon>support_agent</mat-icon>
+            <h3>Suporte Dedicado</h3>
+            <p>Tire suas dúvidas com nossos instrutores</p>
+          </mat-card>
         </div>
-      }
+      </div>
+    </section>
 
-      <footer class="footer">© Plataforma E-learning</footer>
-    </div>
+    <!-- CTA Section -->
+    @if (!authService.isLoggedIn()) {
+      <section class="cta">
+        <div class="container">
+          <h2>Comece sua jornada de aprendizado hoje!</h2>
+          <p>Junte-se a milhares de alunos que já transformaram suas carreiras</p>
+          <button mat-raised-button color="accent" routerLink="/cadastro">
+            <mat-icon>rocket_launch</mat-icon>
+            Começar Agora
+          </button>
+        </div>
+      </section>
+    }
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <p>© 2024 Plataforma E-learning. Todos os direitos reservados.</p>
+      </div>
+    </footer>
   `,
-  styleUrl: './tela-inicial.scss',
+  styleUrl: './tela-inicial.scss'
 })
 export class TelaInicial {
-  constructor(private authService: AuthService, private router: Router) {}
-
-  isLoggedIn = computed(() => this.authService.isLoggedIn());
-  isInstructor = computed(() => this.authService.isInstructor());
-  isStudent = computed(() => this.authService.isStudent());
-
-  logout(): void {
-    this.authService.logout();
-  }
+  constructor(
+    public authService: AuthService,
+    private router: Router
+  ) {}
 }

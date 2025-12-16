@@ -1,68 +1,212 @@
-
-<div class = "painel-instrutor">
-
-
-  <header class="painel-cabecalho">
-      <h1>Painel do Aluno</h1>
+<div class="painel-aluno-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <h1>Meu Painel de Estudos</h1>
+      <p>Bem-vindo, {{ authService.userName() }}!</p>
+    </div>
+    <div class="header-actions">
+      <button mat-raised-button (click)="goToHome()">
+        <mat-icon>home</mat-icon>
+        Início
+      </button>
+      <button mat-raised-button color="warn" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Sair
+      </button>
+    </div>
   </header>
 
-  <section class="resumo">
-    <div class="card-resumo">
-      <h2>3</h2>
-      <p>Total de cursos</p>
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Carregando seus cursos...</p>
     </div>
+  }
 
-    <div class="card-resumo">
-      <h2>1</h2>
-      <p>Em andamento</p>
+  <!-- Error -->
+  @if (error()) {
+    <div class="error-container">
+      <mat-icon color="warn">error</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-raised-button color="primary" (click)="loadCourses()">
+        Tentar Novamente
+      </button>
     </div>
+  }
 
-    <div class="card-resumo">
-      <h2>2</h2>
-      <p>Concluídos</p>
-    </div>
-  </section>
+  <!-- Content -->
+  @if (!isLoading() && !error()) {
+    <div class="content">
+      <!-- Cursos em Andamento -->
+      <section class="courses-section">
+        <h2>
+          <mat-icon>play_circle</mat-icon>
+          Cursos em Andamento ({{ coursesInProgress().length }})
+        </h2>
 
-  <section class="secao-cursos">
+        @if (coursesInProgress().length === 0) {
+          <p class="empty-message">Você ainda não começou nenhum curso.</p>
+        } @else {
+          <div class="courses-grid">
+            @for (item of coursesInProgress(); track item.course.id) {
+              <mat-card class="course-card">
+                <mat-card-header>
+                  <mat-card-title>{{ item.course.title }}</mat-card-title>
+                  <mat-card-subtitle>
+                    <mat-chip-set>
+                      @for (cat of item.course.categories; track cat.id) {
+                        <mat-chip>{{ cat.name }}</mat-chip>
+                      }
+                    </mat-chip-set>
+                  </mat-card-subtitle>
+                </mat-card-header>
 
-    <h2>Cursos em andamento</h2>
+                <mat-card-content>
+                  <p>{{ item.course.description }}</p>
 
-    <div class="card-curso">
-        <h3>Spring do Zero</h3>
-        <p>Módulos: 7</p>
-        <p>Aulas: 67</p>
-      <span class="status andamento">Concluindo</span>
+                  <div class="progress-info">
+                    <span>Progresso: {{ item.progress }}%</span>
+                    <mat-progress-bar
+                      mode="determinate"
+                      [value]="item.progress">
+                    </mat-progress-bar>
+                  </div>
 
-       <div class="progresso">
-          <div class="progresso-barra" style="width: 30%"></div>
-       </div>
-    </div>
+                  <div class="course-info">
+                    <span>
+                      <mat-icon>schedule</mat-icon>
+                      {{ item.course.workload }}h
+                    </span>
+                    <span>
+                      <mat-icon>school</mat-icon>
+                      {{ item.course.instructors[0]?.name }}
+                    </span>
+                  </div>
+                </mat-card-content>
 
-
-     <h2>Cursos Concluídos</h2>
-
-
-
-       <div class="card-curso">
-
-        <div class = " alinhar-button ">
-        <h3>Angular do Zero</h3>
-        <p>Módulos: 5</p>
-        <p>Aulas: 50</p>
-
-         <button class = "btn-primary" onclick="window.location.href='/avaliar-curso'">
-
-             Avaliar Curso ⭐
-          </button>
-
+                <mat-card-actions>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="goToCourse(item.course.id)">
+                    Continuar
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            }
           </div>
-      <span class="status andamento">Concluído</span>
+        }
+      </section>
 
-       <div class="progresso">
-          <div class="progresso-barra" style="width: 100%"></div>
-       </div>
+      <!-- Cursos Não Iniciados -->
+      <section class="courses-section">
+        <h2>
+          <mat-icon>book</mat-icon>
+          Meus Cursos ({{ coursesNotStarted().length }})
+        </h2>
+
+        @if (coursesNotStarted().length === 0) {
+          <p class="empty-message">Você não tem cursos pendentes.</p>
+        } @else {
+          <div class="courses-grid">
+            @for (item of coursesNotStarted(); track item.course.id) {
+              <mat-card class="course-card">
+                <mat-card-header>
+                  <mat-card-title>{{ item.course.title }}</mat-card-title>
+                  <mat-card-subtitle>
+                    <mat-chip-set>
+                      @for (cat of item.course.categories; track cat.id) {
+                        <mat-chip>{{ cat.name }}</mat-chip>
+                      }
+                    </mat-chip-set>
+                  </mat-card-subtitle>
+                </mat-card-header>
+
+                <mat-card-content>
+                  <p>{{ item.course.description }}</p>
+
+                  <div class="course-info">
+                    <span>
+                      <mat-icon>schedule</mat-icon>
+                      {{ item.course.workload }}h
+                    </span>
+                    <span>
+                      <mat-icon>school</mat-icon>
+                      {{ item.course.instructors[0]?.name }}
+                    </span>
+                  </div>
+                </mat-card-content>
+
+                <mat-card-actions>
+                  <button
+                    mat-raised-button
+                    color="accent"
+                    (click)="goToCourse(item.course.id)">
+                    Começar Agora
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- Cursos Concluídos -->
+      <section class="courses-section">
+        <h2>
+          <mat-icon>check_circle</mat-icon>
+          Cursos Concluídos ({{ coursesCompleted().length }})
+        </h2>
+
+        @if (coursesCompleted().length === 0) {
+          <p class="empty-message">Você ainda não concluiu nenhum curso.</p>
+        } @else {
+          <div class="courses-grid">
+            @for (item of coursesCompleted(); track item.course.id) {
+              <mat-card class="course-card completed">
+                <mat-card-header>
+                  <mat-card-title>
+                    {{ item.course.title }}
+                    <mat-icon class="completed-icon">verified</mat-icon>
+                  </mat-card-title>
+                  <mat-card-subtitle>
+                    <mat-chip-set>
+                      @for (cat of item.course.categories; track cat.id) {
+                        <mat-chip>{{ cat.name }}</mat-chip>
+                      }
+                    </mat-chip-set>
+                  </mat-card-subtitle>
+                </mat-card-header>
+
+                <mat-card-content>
+                  <p>{{ item.course.description }}</p>
+
+                  <div class="course-info">
+                    <span>
+                      <mat-icon>schedule</mat-icon>
+                      {{ item.course.workload }}h
+                    </span>
+                    <span>
+                      <mat-icon>event</mat-icon>
+                      Concluído em {{ item.enrolledAt | date: 'dd/MM/yyyy' }}
+                    </span>
+                  </div>
+                </mat-card-content>
+
+                <mat-card-actions>
+                  <button
+                    mat-raised-button
+                    (click)="goToCourse(item.course.id)">
+                    Revisar
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            }
+          </div>
+        }
+      </section>
     </div>
-  </section>
-
+  }
 </div>
-

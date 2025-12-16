@@ -1,31 +1,39 @@
 <div class="home-container">
   <div class="hero">
     <h1>Plataforma E-learning</h1>
-    <p>Crie sua conta para começar a aprender ou ensinar.</p>
+    <p>Crie sua conta e comece a aprender ou ensinar!</p>
   </div>
 
   <div class="card">
-    <h2>Cadastro</h2>
-    <p>Preencha os dados abaixo</p>
+    <h2>Cadastro de Usuário</h2>
+    <p>Preencha os dados abaixo para criar sua conta</p>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <!-- Nome -->
       <div class="form-group">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Nome</mat-label>
-          <input matInput formControlName="name" placeholder="Digite seu nome completo">
+          <mat-label>Nome Completo</mat-label>
+          <input
+            matInput
+            formControlName="name"
+            placeholder="Digite seu nome completo"
+            [disabled]="isLoading">
           <mat-error *ngIf="form.get('name')?.hasError('required')">
             Nome é obrigatório
-          </mat-error>
-          <mat-error *ngIf="form.get('name')?.hasError('minlength')">
-            Nome deve ter no mínimo 3 caracteres
           </mat-error>
         </mat-form-field>
       </div>
 
+      <!-- Email -->
       <div class="form-group">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Email</mat-label>
-          <input matInput type="email" formControlName="email" placeholder="seu@email.com">
+          <input
+            matInput
+            type="email"
+            formControlName="email"
+            placeholder="Digite seu email"
+            [disabled]="isLoading">
           <mat-error *ngIf="form.get('email')?.hasError('required')">
             Email é obrigatório
           </mat-error>
@@ -35,10 +43,16 @@
         </mat-form-field>
       </div>
 
+      <!-- Senha -->
       <div class="form-group">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Senha</mat-label>
-          <input matInput type="password" formControlName="password" placeholder="Mínimo 6 caracteres">
+          <input
+            matInput
+            type="password"
+            formControlName="password"
+            placeholder="Digite sua senha (mínimo 6 caracteres)"
+            [disabled]="isLoading">
           <mat-error *ngIf="form.get('password')?.hasError('required')">
             Senha é obrigatória
           </mat-error>
@@ -48,37 +62,45 @@
         </mat-form-field>
       </div>
 
+      <!-- Tipo de Usuário -->
       <div class="form-group">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Tipo de usuário</mat-label>
-          <mat-select formControlName="role">
+          <mat-label>Tipo de Usuário</mat-label>
+          <mat-select formControlName="role" [disabled]="isLoading">
             <mat-option value="STUDENT">Aluno</mat-option>
             <mat-option value="INSTRUCTOR">Instrutor</mat-option>
           </mat-select>
-          <mat-error *ngIf="form.get('role')?.invalid">
-            Selecione um perfil
+          <mat-error *ngIf="form.get('role')?.hasError('required')">
+            Tipo de usuário é obrigatório
           </mat-error>
         </mat-form-field>
       </div>
 
-      <button
-        mat-raised-button
-        color="primary"
-        class="rounded-btn full-width"
-        type="submit"
-        [disabled]="form.invalid || isLoading">
-        {{ isLoading ? 'Cadastrando...' : 'Cadastrar' }}
-      </button>
+      <!-- Botões -->
+      <div class="button-group">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="isLoading || form.invalid"
+          class="full-width-btn">
+          <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+          <span *ngIf="!isLoading">Cadastrar</span>
+        </button>
 
-      <button
-        mat-button
-        type="button"
-        class="full-width"
-        (click)="goToLogin()">
-        Já tem uma conta? Faça login
-      </button>
+        <button
+          mat-raised-button
+          type="button"
+          (click)="goToLogin()"
+          [disabled]="isLoading"
+          class="full-width-btn">
+          Já tenho conta - Fazer Login
+        </button>
+      </div>
     </form>
   </div>
 
-  <footer class="footer">© Plataforma E-learning</footer>
+  <footer class="footer">
+    © Plataforma E-learning
+  </footer>
 </div>

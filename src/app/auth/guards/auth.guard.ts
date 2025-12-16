@@ -22,7 +22,14 @@ export const studentGuard: CanActivateFn = () => {
     return true;
   }
 
-  router.navigate(['/']);
+  // Se estiver logado mas não for aluno, redireciona para home
+  if (authService.isLoggedIn()) {
+    router.navigate(['/']);
+    return false;
+  }
+
+  // Se não estiver logado, redireciona para login
+  router.navigate(['/login']);
   return false;
 };
 
@@ -34,6 +41,13 @@ export const instructorGuard: CanActivateFn = () => {
     return true;
   }
 
-  router.navigate(['/']);
+  // Se estiver logado mas não for instrutor, redireciona para home
+  if (authService.isLoggedIn()) {
+    router.navigate(['/']);
+    return false;
+  }
+
+  // Se não estiver logado, redireciona para login
+  router.navigate(['/login']);
   return false;
 };
