@@ -41,7 +41,7 @@ export class CadastroUsuario {
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      role: ['STUDENT', Validators.required]
+      role: ['ROLE_STUDENT', Validators.required]
     });
   }
 
