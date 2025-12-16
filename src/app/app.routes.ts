@@ -16,15 +16,17 @@ export const routes: Routes = [
   { path: '', component: TelaInicial },
   { path: 'login', component: Login },
   { path: 'cadastro', component: CadastroUsuario },
-  { path: 'aluno', component: PainelAluno, canActivate: [authGuard, studentGuard] },
-  { path: 'instrutor', component: PainelInstrutor, canActivate: [authGuard, instructorGuard] },
+
   { path: 'cadastro-curso', component: CadastroCurso, canActivate: [authGuard, instructorGuard] },
   { path: 'cadastro-aula', component: CadastroAula, canActivate: [authGuard, instructorGuard] },
   { path: 'cadastro-modulo', component: CadastroModulo, canActivate: [authGuard, instructorGuard] },
-  { path: 'avaliar-curso', component: AvaliacaoCurso, canActivate: [authGuard] },
+
   {
     path: 'cursos',
     loadChildren: () => import('./courses/courses-module').then(m => m.CoursesModule)
   },{ path: 'forum', component: Forum },
+  { path: 'aluno', component: PainelAluno, canActivate: [authGuard, studentGuard] },
+  { path: 'instrutor', component: PainelInstrutor, canActivate: [authGuard, instructorGuard] },
+  { path: 'avaliar-curso', component: AvaliacaoCurso, canActivate: [authGuard] },
   { path: '**', redirectTo: '' }
 ];

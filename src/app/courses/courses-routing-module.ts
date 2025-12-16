@@ -8,12 +8,17 @@ import { CadastroModulo} from './cadastro-modulo/cadastro-modulo';
 import { CadastroAula} from './cadastro-aula/cadastro-aula';
 import { AvaliacaoCurso} from './avaliacao-curso/avaliacao-curso';
 import { Forum } from './forum/forum';
+import { PainelAluno } from '../aluno/painel-aluno/painel-aluno';
+import { PainelInstrutor } from '../instrutor/painel-instrutor/painel-instrutor';
 
 const routes: Routes = [
 
   // Lista de cursos
   { path: '', component: PainelCursos},
   { path: 'forum', component: Forum },
+  { path: 'aluno', component: PainelAluno},
+  { path: 'instrutor', component: PainelInstrutor},
+  { path: 'avaliar-cursos', component: AvaliacaoCurso},
 
 
   // Curso específico

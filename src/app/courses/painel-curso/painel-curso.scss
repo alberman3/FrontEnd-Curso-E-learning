@@ -227,3 +227,27 @@ $border-color: #d1d7dc;
     border-top: 1px solid $border-color;
   }
 }
+
+.course-header {
+  margin-bottom: 16px;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #3f51b5;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-back:hover {
+  text-decoration: underline;
+}
+
+.btn-back i {
+  font-size: 16px;
+}
+

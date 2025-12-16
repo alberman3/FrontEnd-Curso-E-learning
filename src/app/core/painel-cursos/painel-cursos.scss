@@ -142,16 +142,18 @@
 .tabs-container {
   display: flex;
   gap: 8px;
+
 }
 
 .tab-btn {
   background: transparent;
   border: none;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 15px;
+
+  color: rgba(241, 1, 1, 0.7);
+  font-size: 16px;
   padding: 8px 16px;
   cursor: pointer;
-  border-bottom: 3px solid transparent;
+  border-bottom: 4px solid transparent;
   transition: all 0.2s ease;
 
   &:hover {
