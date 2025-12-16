@@ -1,0 +1,77 @@
+<div class="topic-details-container">
+
+    <header class="topic-header">
+        <a routerLink="../" class="back-link">
+            <i class="fas fa-arrow-left"></i> Voltar para o Fórum
+        </a>
+
+        <div class="topic-title-area">
+            <h1>Como faço para usar o operador 'switchMap' corretamente em um fluxo RxJS?</h1>
+            <span class="status-tag status-resolved">RESOLVIDA</span>
+            </div>
+
+        <div class="topic-info">
+            Postado por:
+            <span class="author-name">Carlos Eduardo</span> |
+            <span class="post-date">em 10 de Dezembro de 2025</span> |
+            <span class="module-name">Módulo 5: RxJS Avançado</span>
+        </div>
+    </header>
+
+    <section class="original-question">
+        <p>Olá, pessoal! Estou tendo dificuldades para entender a diferença entre `switchMap` e `mergeMap`. Meu cenário é que, ao receber um ID de usuário, eu preciso buscar o perfil e, em seguida, buscar os últimos 5 pedidos desse usuário.</p>
+        <p>Tentei usar o `mergeMap`, mas estou vendo requisições sendo misturadas se o ID mudar muito rápido. Devo usar `switchMap` para cancelar a requisição anterior?</p>
+
+        <div class="question-actions">
+            <button class="action-btn"><i class="fas fa-thumbs-up"></i> Útil (4)</button>
+            <button class="action-btn favorite"><i class="fas fa-bookmark"></i> Salvar</button>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="answers-section">
+        <h2>3 Respostas</h2>
+
+        <article class="answer-item">
+            <div class="answer-header">
+                <span class="user-avatar">I</span>
+                <div class="user-info">
+                    <span class="user-name">João da Silva</span>
+                    <span class="user-role instructor">INSTRUTOR</span>
+                    <span class="answer-date">respondeu há 50 minutos</span>
+                </div>
+                <i class="fas fa-check-circle best-answer-icon"></i> </div>
+            <div class="answer-body">
+                <p>Ótima pergunta, Carlos! Para o seu cenário, o **`switchMap`** é o mais indicado. Ele é ideal justamente para a lógica de "cancelamento": se uma nova fonte de dados (o novo ID de usuário) chegar antes da requisição anterior terminar, o `switchMap` cancela automaticamente a requisição antiga e inicia a nova.</p>
+                <p>O `mergeMap` deixa todas as requisições em paralelo, o que pode levar a resultados misturados se a ordem de chegada for importante.</p>
+            </div>
+            <div class="answer-footer">
+                <button class="action-btn"><i class="fas fa-thumbs-up"></i> Agradecer</button>
+            </div>
+        </article>
+
+        <article class="answer-item">
+            <div class="answer-header">
+                <span class="user-avatar">M</span>
+                <div class="user-info">
+                    <span class="user-name">Maria Helena</span>
+                    <span class="answer-date">respondeu há 3 horas</span>
+                </div>
+            </div>
+            <div class="answer-body">
+                <p>Isso! Para complementar o que o João disse, lembre-se que o `switchMap` é muito usado em campos de busca com autocompletar, onde você só quer o resultado da ÚLTIMA coisa que o usuário digitou.</p>
+            </div>
+            <div class="answer-footer">
+                <button class="action-btn"><i class="fas fa-thumbs-up"></i> Agradecer</button>
+            </div>
+        </article>
+    </section>
+
+    <section class="new-answer-form">
+        <h3>Sua Resposta</h3>
+        <textarea placeholder="Digite sua contribuição ou solução aqui..." rows="5"></textarea>
+        <button class="btn-submit-answer">Enviar Resposta</button>
+    </section>
+
+</div>

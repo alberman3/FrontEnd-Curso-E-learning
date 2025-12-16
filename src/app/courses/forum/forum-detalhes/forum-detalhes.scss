@@ -1,0 +1,233 @@
+// Cores (Reutilize as variáveis do SCSS da listagem)
+$primary-color: #3f51b5;
+$secondary-color: #f44336;
+$success-color: #4caf50;
+$text-color: #333;
+$light-gray: #f9f9f9;
+$border-color: #eee;
+$instructor-tag: #ff9800; // Laranja para Instrutor
+
+.topic-details-container {
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+// 1. Cabeçalho
+.topic-header {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid $border-color;
+}
+
+.back-link {
+    display: inline-block;
+    color: $primary-color;
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 15px;
+
+    i { margin-right: 5px; }
+}
+
+.topic-title-area {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+
+    h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+        color: $text-color;
+    }
+}
+
+.status-tag {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-left: 15px;
+    text-transform: uppercase;
+
+    &.status-resolved { background-color: $success-color; }
+    &.status-unanswered { background-color: $secondary-color; }
+}
+
+.topic-info {
+    font-size: 0.9rem;
+    color: #888;
+    span { font-weight: 500; }
+    .author-name { color: $text-color; }
+    .module-name { font-style: italic; }
+}
+
+// 2. Pergunta Original
+.original-question {
+    padding: 20px 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: $text-color;
+}
+
+.question-actions {
+    margin-top: 15px;
+    .action-btn {
+        background: none;
+        border: 1px solid $border-color;
+        color: #777;
+        padding: 8px 15px;
+        border-radius: 20px;
+        cursor: pointer;
+        margin-right: 10px;
+        transition: background-color 0.2s;
+
+        &:hover {
+            background-color: $light-gray;
+            color: $primary-color;
+            border-color: $primary-color;
+        }
+    }
+}
+
+.divider {
+    border: 0;
+    height: 1px;
+    background-color: $border-color;
+    margin: 30px 0;
+}
+
+// 3. Respostas
+.answers-section {
+    h2 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: $text-color;
+    }
+}
+
+.answer-item {
+    background-color: $light-gray;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border-left: 5px solid transparent;
+    position: relative;
+}
+
+.answer-item:has(.best-answer-icon) {
+    border-left-color: $success-color;
+    background-color: lighten($success-color, 45%);
+}
+
+.answer-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: $primary-color;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-right: 15px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    .user-name { font-weight: bold; color: $text-color; }
+    .user-role {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 2px 6px;
+        border-radius: 3px;
+        margin-top: 2px;
+        display: inline-block;
+
+        &.instructor {
+            background-color: $instructor-tag;
+            color: white;
+        }
+    }
+    .answer-date { font-size: 0.8rem; color: #999; }
+}
+
+.best-answer-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: $success-color;
+    font-size: 1.8rem;
+}
+
+.answer-body {
+    p {
+        margin: 0 0 10px 0;
+        line-height: 1.5;
+    }
+}
+
+.answer-footer {
+    padding-top: 10px;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 10px;
+
+    .action-btn {
+        background: none;
+        border: none;
+        color: #777;
+        font-weight: 500;
+        cursor: pointer;
+
+        i { margin-right: 5px; }
+        &:hover { color: $primary-color; }
+    }
+}
+
+// 4. Formulário de Nova Resposta
+.new-answer-form {
+    padding-top: 20px;
+    margin-top: 20px;
+    h3 {
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+        color: $text-color;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid $border-color;
+        border-radius: 4px;
+        resize: vertical;
+        font-size: 1rem;
+        box-sizing: border-box;
+    }
+
+    .btn-submit-answer {
+        background-color: $primary-color;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 10px;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: darken($primary-color, 10%);
+        }
+    }
+}

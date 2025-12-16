@@ -1,0 +1,184 @@
+// 1. Variáveis de Cores e Tipografia (Ajuste para a paleta do seu projeto)
+$primary-color: #3f51b5; // Azul (similar ao Material Design)
+$secondary-color: #f44336; // Vermelho para status não resolvido
+$success-color: #4caf50; // Verde para status resolvido
+$text-color: #333;
+$light-gray: #f5f5f5;
+$border-color: #eee;
+$font-stack: 'Roboto', 'Arial', sans-serif;
+
+.forum-container {
+    font-family: $font-stack;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+// 2. Header e Ações (Filtros e Botão de Nova Dúvida)
+.forum-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid $border-color;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+
+    h1 {
+        font-size: 1.8rem;
+        color: $text-color;
+        margin: 0;
+    }
+}
+
+.forum-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.btn-new-question {
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: darken($primary-color, 10%);
+    }
+
+    i {
+        margin-right: 8px;
+    }
+}
+
+.filter-select {
+    padding: 10px;
+    border: 1px solid $border-color;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+// 3. Estilização da Lista de Dúvidas
+.question-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.question-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid $border-color;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: $light-gray;
+        cursor: pointer;
+    }
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.status-indicator {
+    width: 8px;
+    height: 100%;
+    border-radius: 4px;
+    margin-right: 15px;
+    flex-shrink: 0; // Não deixa o indicador diminuir
+
+    &.status-resolved {
+        background-color: $success-color;
+    }
+    &.status-unanswered {
+        background-color: $secondary-color;
+    }
+}
+
+.question-content {
+    flex-grow: 1;
+    min-width: 0; // Ajuda no flexbox
+}
+
+.question-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: $text-color;
+    text-decoration: none;
+
+    &:hover {
+        color: $primary-color;
+    }
+}
+
+.question-metadata {
+    font-size: 0.85rem;
+    color: #999;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.question-stats {
+    text-align: center;
+    width: 80px;
+    padding: 0 10px;
+    flex-shrink: 0;
+}
+
+.stat-count {
+    display: block;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: $primary-color;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #777;
+    text-transform: uppercase;
+}
+
+.last-activity .stat-count {
+    font-size: 1rem;
+    font-weight: normal;
+    color: $text-color;
+}
+
+
+// 4. Footer (Paginação)
+.forum-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid $border-color;
+    gap: 10px;
+
+    .btn-pagination {
+        background: none;
+        border: 1px solid $primary-color;
+        color: $primary-color;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $primary-color;
+            color: white;
+        }
+    }
+
+    .page-info {
+        font-size: 0.9rem;
+        color: #777;
+    }
+}

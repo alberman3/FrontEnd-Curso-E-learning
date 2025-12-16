@@ -9,6 +9,7 @@ import { CadastroCurso } from './courses/cadastro-curso/cadastro-curso';
 import { CadastroAula } from './courses/cadastro-aula/cadastro-aula';
 import { CadastroModulo } from './courses/cadastro-modulo/cadastro-modulo';
 import { AvaliacaoCurso } from './courses/avaliacao-curso/avaliacao-curso';
+import { Forum } from './courses/forum/forum';
 
 
 export const routes: Routes = [
@@ -24,6 +25,6 @@ export const routes: Routes = [
   {
     path: 'cursos',
     loadChildren: () => import('./courses/courses-module').then(m => m.CoursesModule)
-  },
+  },{ path: 'forum', component: Forum },
   { path: '**', redirectTo: '' }
 ];

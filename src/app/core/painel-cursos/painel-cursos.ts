@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CoursesService } from '../../courses/services/courses-services';
 import { Course } from '../../courses/model/course';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-painel-cursos',
@@ -18,7 +19,8 @@ import { Course } from '../../courses/model/course';
     MatInputModule,
     MatButtonModule,
     MatCardModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    RouterModule
   ],
   templateUrl: './painel-cursos.html',
   styleUrl: './painel-cursos.scss',

@@ -7,11 +7,14 @@ import { CadastroCurso } from './cadastro-curso/cadastro-curso';
 import { CadastroModulo} from './cadastro-modulo/cadastro-modulo';
 import { CadastroAula} from './cadastro-aula/cadastro-aula';
 import { AvaliacaoCurso} from './avaliacao-curso/avaliacao-curso';
+import { Forum } from './forum/forum';
 
 const routes: Routes = [
 
   // Lista de cursos
   { path: '', component: PainelCursos},
+  { path: 'forum', component: Forum },
+
 
   // Curso específico
   { path: ':id', component: PainelCurso},

@@ -1,5 +1,8 @@
+
 <mat-toolbar color="primary" class="toolbar">
   <div class="toolbar-content">
+
+    <!-- Pesquisa -->
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Pesquisar curso</mat-label>
       <input
@@ -8,8 +11,29 @@
         #searchInput
         (input)="filterCursos(searchInput.value)">
     </mat-form-field>
+
+    <!-- Abas de navegação -->
+    <div class="tabs-container">
+      <button
+        class="tab-btn"
+        routerLink="."
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        Cursos
+      </button>
+
+      <button
+        class="tab-btn"
+        routerLink="forum"
+        routerLinkActive="active">
+        Fórum
+      </button>
+    </div>
+
   </div>
 </mat-toolbar>
+
+
 
 <div class="content-container">
 
