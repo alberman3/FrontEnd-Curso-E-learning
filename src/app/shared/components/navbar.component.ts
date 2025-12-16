@@ -77,7 +77,7 @@ import { AuthService } from '../../auth/services/auth-services';
             <mat-menu #userMenu="matMenu">
               <div class="user-info">
                 <strong>{{ authService.userName() }}</strong>
-                <small>{{ authService.userRole() === 'STUDENT' ? 'Aluno' : 'Instrutor' }}</small>
+                <small>{{ authService.userRole() === 'ROLE_STUDENT' ? 'Aluno' : 'Instrutor' }}</small>
               </div>
               <mat-divider></mat-divider>
 
