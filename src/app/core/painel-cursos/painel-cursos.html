@@ -12,6 +12,7 @@
 </mat-toolbar>
 
 <div class="content-container">
+
   @if (isLoading()) {
     <div class="loading-container">
       <mat-spinner></mat-spinner>
@@ -30,19 +31,60 @@
 
   @if (!isLoading() && !error()) {
     <div class="cards-container">
+
       @for (curso of cursosFiltered(); track curso.id) {
         <mat-card class="course-card" (click)="goToCourse(curso.id)">
-          <mat-card-header>
-            <mat-card-title>{{ curso.title }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p>{{ curso.description }}</p>
-            <p class="workload">Carga horária: {{ curso.workload }}h</p>
+
+          <!-- IMAGEM -->
+          <div class="image-container">
+            <img
+              [src]="curso.imageUrl"
+              [alt]="curso.title"
+              loading="lazy"
+            />
+
+            @if (curso.isBestSeller) {
+              <span class="badge">Mais vendido</span>
+            }
+          </div>
+
+          <!-- CONTEÚDO -->
+          <mat-card-content class="card-content">
+
+            <h3 class="title">
+              {{ curso.title }}
+            </h3>
+
+            <p class="description">
+              {{ curso.description }}
+            </p>
+
+            <div class="info-row">
+              <span class="workload">
+                {{ curso.workload }}h
+              </span>
+
+              <div class="price-box">
+                @if (curso.oldPrice > curso.price) {
+                  <span class="old-price">
+                    R$ {{ curso.oldPrice | number:'1.2-2' }}
+                  </span>
+                }
+
+                <span class="price">
+                  R$ {{ curso.price | number:'1.2-2' }}
+                </span>
+              </div>
+            </div>
+
           </mat-card-content>
+
         </mat-card>
       } @empty {
         <p class="no-results">Nenhum curso encontrado</p>
       }
+
     </div>
   }
+
 </div>

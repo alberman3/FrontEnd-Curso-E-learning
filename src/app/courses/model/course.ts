@@ -8,6 +8,11 @@ export interface Course {
   description: string;
   workload: number;
 
+  imageUrl: string;
+  price: number;
+  oldPrice: number;
+  isBestSeller: boolean;
+
   instructors: Instrutor[];
   categories: Categoria[];
 
