@@ -60,7 +60,6 @@ export class CadastroAula implements OnInit {
       }
     });
 
-    // Auto-atualizar ordem quando módulo for selecionado
     this.form.get('moduleId')?.valueChanges.subscribe(moduleId => {
       if (moduleId) {
         this.loadLessonOrder(moduleId);
@@ -70,33 +69,28 @@ export class CadastroAula implements OnInit {
 
   loadModules(): void {
     this.coursesService.getModulesByCourse(this.courseId).subscribe({
-      next: (modules) => {
-        this.modules.set(modules);
-        if (modules.length === 0) {
-          this.snackBar.open(
-            'Este curso não tem módulos. Crie um módulo primeiro.',
-            'Fechar',
-            { duration: 5000 }
-          );
-        }
-      },
-      error: (err) => {
-        console.error('Erro ao carregar módulos:', err);
+      next: modules => this.modules.set(modules),
+      error: err => {
+        console.error(err);
         this.snackBar.open('Erro ao carregar módulos', 'Fechar', { duration: 3000 });
       }
     });
   }
 
+  // ✅ CORRETO: só calcula ordem
   loadLessonOrder(moduleId: number): void {
-    this.coursesService.getLessonsByModule(moduleId).subscribe({
-      next: (lessons) => {
-        const nextOrder = lessons.length + 1;
-        this.form.patchValue({ order: nextOrder });
-      },
-      error: (err) => console.error('Erro ao carregar aulas:', err)
-    });
+    this.coursesService
+  .getLessonsByModule(this.courseId, moduleId)
+  .subscribe({
+    next: (lessons) => {
+      const nextOrder = lessons.length + 1;
+      this.form.patchValue({ order: nextOrder });
+    },
+    error: (err) => console.error('Erro ao carregar aulas:', err)
+  });
   }
 
+  // ✅ CORRETO: cria aula
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -105,17 +99,28 @@ export class CadastroAula implements OnInit {
 
     this.isLoading.set(true);
 
-    this.coursesService.createLesson(this.form.value).subscribe({
-      next: () => {
-        this.snackBar.open('Aula criada com sucesso!', 'OK', { duration: 2000 });
-        this.router.navigate(['/instrutor']);
-      },
-      error: (err) => {
-        console.error('Erro ao criar aula:', err);
-        this.snackBar.open('Erro ao criar aula', 'Fechar', { duration: 3000 });
-        this.isLoading.set(false);
-      }
-    });
+    const moduleId = this.form.value.moduleId;
+
+    const lessonPayload = {
+      title: this.form.value.title,
+      content: this.form.value.content,
+      videoUrl: this.form.value.videoUrl,
+      order: this.form.value.order
+    };
+
+    this.coursesService
+      .createLesson(this.courseId, moduleId, lessonPayload)
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Aula criada com sucesso!', 'OK', { duration: 2000 });
+          this.router.navigate(['/instrutor']);
+        },
+        error: err => {
+          console.error(err);
+          this.snackBar.open('Erro ao criar aula', 'Fechar', { duration: 3000 });
+          this.isLoading.set(false);
+        }
+      });
   }
 
   cancel(): void {

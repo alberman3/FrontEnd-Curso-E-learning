@@ -90,21 +90,24 @@ export class CadastroModulo implements OnInit {
     this.isLoading.set(true);
 
     const payload = {
-      ...this.form.value,
-      courseId: this.courseId
-    };
+  title: this.form.value.title,
+  description: this.form.value.description,
+  order: this.form.value.order
+};
 
-    this.coursesService.createModule(payload).subscribe({
-      next: () => {
-        this.snackBar.open('Módulo criado com sucesso!', 'OK', { duration: 2000 });
-        this.router.navigate(['/instrutor']);
-      },
-      error: (err) => {
-        console.error('Erro ao criar módulo:', err);
-        this.snackBar.open('Erro ao criar módulo', 'Fechar', { duration: 3000 });
-        this.isLoading.set(false);
-      }
-    });
+this.coursesService
+  .createModule(this.courseId, payload)
+  .subscribe({
+    next: () => {
+      this.snackBar.open('Módulo criado com sucesso!', 'OK', { duration: 2000 });
+      this.router.navigate(['/instrutor']);
+    },
+    error: (err) => {
+      console.error('Erro ao criar módulo:', err);
+      this.snackBar.open('Erro ao criar módulo', 'Fechar', { duration: 3000 });
+      this.isLoading.set(false);
+    }
+  });
   }
 
   cancel(): void {

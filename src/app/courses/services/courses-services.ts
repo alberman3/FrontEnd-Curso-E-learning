@@ -4,8 +4,9 @@ import { Observable } from 'rxjs';
 import { Course } from '../model/course';
 import { Modulo } from '../model/modulo';
 import { Aula } from '../model/aula';
-import { Enrollment } from '../model/enrollment';
 import { LessonProgress } from '../model/lesson-progress';
+import { EnrollmentResponseDTO } from '../model/enrollment';
+
 
 export interface CreateCourseRequest {
   title: string;
@@ -18,19 +19,20 @@ export interface CreateCourseRequest {
   instructorIds: number[];
 }
 
+
+
 export interface CreateModuleRequest {
   title: string;
   description: string;
   order: number;
-  courseId: number;
+
 }
 
 export interface CreateLessonRequest {
-  title: string;
+    title: string;
   content: string;
   videoUrl?: string;
   order: number;
-  moduleId: number;
 }
 
 export interface StudentCourse {
@@ -45,7 +47,6 @@ export interface StudentCourse {
 })
 export class CoursesService {
   private readonly API_BASE = '/courses';
-
   constructor(private http: HttpClient) {}
 
   // ========== CURSOS ==========
@@ -78,13 +79,28 @@ export class CoursesService {
   }
 
   // ========== MÓDULOS ==========
-  getModulesByCourse(courseId: number): Observable<Modulo[]> {
-    return this.http.get<Modulo[]>(`${this.API_BASE}/${courseId}/modules`);
-  }
+ getModulesByCourse(courseId: number) {
+  return this.http.get<Modulo[]>(
+    `/courses/${courseId}/modules`
+  );
+}
+createModule(courseId: number, payload: CreateModuleRequest) {
+  return this.http.post(
+    `/courses/${courseId}/modules/create`,
+    payload
+  );
+}
 
-  createModule(module: CreateModuleRequest): Observable<Modulo> {
-    return this.http.post<Modulo>(`${this.API_BASE}/modules`, module);
-  }
+
+  /***
+   * talvez tenha que trocar pra isso
+   * createModule(courseId: number, module: CreateModuleRequest): Observable<Modulo> {
+  return this.http.post<Modulo>(
+    `${this.API_BASE}/${courseId}/modules`,
+    module
+  );
+}
+   */
 
   updateModule(id: number, module: CreateModuleRequest): Observable<Modulo> {
     return this.http.put<Modulo>(`${this.API_BASE}/modules/${id}`, module);
@@ -95,32 +111,64 @@ export class CoursesService {
   }
 
   // ========== AULAS ==========
-  getLessonsByModule(moduleId: number): Observable<Aula[]> {
-    return this.http.get<Aula[]>(`${this.API_BASE}/modules/${moduleId}/lessons`);
-  }
+ getLessonsByModule(courseId: number, moduleId: number) {
+  return this.http.get<Aula[]>(
+    `/courses/${courseId}/modules/${moduleId}/lessons`
+  );
+}
 
-  createLesson(lesson: CreateLessonRequest): Observable<Aula> {
-    return this.http.post<Aula>(`${this.API_BASE}/lessons`, lesson);
-  }
 
-  updateLesson(id: number, lesson: CreateLessonRequest): Observable<Aula> {
-    return this.http.put<Aula>(`${this.API_BASE}/lessons/${id}`, lesson);
-  }
 
-  deleteLesson(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.API_BASE}/lessons/${id}`);
-  }
+ createLesson(
+  courseId: number,
+  moduleId: number,
+  payload: CreateLessonRequest
+) {
+  return this.http.post(
+    `/courses/${courseId}/modules/${moduleId}/lessons/create`,
+    payload
+  );
+}
+
+  updateLesson(
+  courseId: number,
+  moduleId: number,
+  lessonId: number,
+  lesson: CreateLessonRequest
+): Observable<Aula> {
+  return this.http.put<Aula>(
+    `${this.API_BASE}/${courseId}/modules/${moduleId}/lessons/${lessonId}`,
+    lesson
+  );
+}
+
+deleteLesson(
+  courseId: number,
+  moduleId: number,
+  lessonId: number
+): Observable<void> {
+  return this.http.delete<void>(
+    `${this.API_BASE}/${courseId}/modules/${moduleId}/lessons/${lessonId}`
+  );
+}
 
   // ========== MATRÍCULA ==========
-  enroll(courseId: number, userId: number): Observable<Enrollment> {
-    return this.http.post<Enrollment>(`${this.API_BASE}/${courseId}/enroll`, { userId });
-  }
+enroll(courseId: number, studentId: number) {
+  return this.http.post<EnrollmentResponseDTO>(
+    '/enrollments/create',
+    { courseId, studentId }
+  );
+}
 
-  getEnrollment(courseId: number, userId: number): Observable<Enrollment | null> {
-    return this.http.get<Enrollment | null>(
-      `${this.API_BASE}/${courseId}/enrollment/${userId}`
-    );
-  }
+  getEnrollment(
+  courseId: number,
+  userId: number
+): Observable<EnrollmentResponseDTO | null> {
+  return this.http.get<EnrollmentResponseDTO | null>(
+    `${this.API_BASE}/${courseId}/enrollment/${userId}`
+  );
+}
+
 
   // ========== PROGRESSO ==========
   markLessonComplete(enrollmentId: number, lessonId: number): Observable<LessonProgress> {
