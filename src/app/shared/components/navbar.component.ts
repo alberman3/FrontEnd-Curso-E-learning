@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatDividerModule } from '@angular/material/divider'; // ADICIONADO
+import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../auth/services/auth-services';
 
 @Component({
@@ -18,7 +18,7 @@ import { AuthService } from '../../auth/services/auth-services';
     MatIconModule,
     MatMenuModule,
     MatToolbarModule,
-    MatDividerModule // ADICIONADO
+    MatDividerModule
   ],
   template: `
     <mat-toolbar class="navbar">
@@ -33,34 +33,37 @@ import { AuthService } from '../../auth/services/auth-services';
         <div class="nav-links">
           @if (!authService.isLoggedIn()) {
             <!-- Usuário NÃO logado -->
-            <button mat-button routerLink="/cursos">
+            <button mat-button routerLink="/cursos" class="nav-btn">
               <mat-icon>library_books</mat-icon>
               <span>Cursos</span>
             </button>
-            <button mat-button routerLink="/login">
+            <button mat-button routerLink="/login" class="nav-btn">
               <mat-icon>login</mat-icon>
               <span>Entrar</span>
             </button>
-            <button mat-raised-button color="accent" routerLink="/cadastro">
+            <button mat-raised-button color="accent" routerLink="/cadastro" class="signup-btn">
               <mat-icon>person_add</mat-icon>
               <span>Cadastrar</span>
             </button>
           } @else {
             <!-- Usuário LOGADO -->
-            <button mat-button routerLink="/cursos">
+            <button mat-button routerLink="/cursos" class="nav-btn">
               <mat-icon>library_books</mat-icon>
               <span>Cursos</span>
             </button>
 
             <!-- Menu do usuário -->
             <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-btn">
-              <mat-icon>account_circle</mat-icon>
+              <mat-icon class="user-avatar">account_circle</mat-icon>
               <span class="user-name">{{ authService.userName() }}</span>
-              <mat-icon>arrow_drop_down</mat-icon>
+              <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
             </button>
 
-            <mat-menu #userMenu="matMenu">
+            <mat-menu #userMenu="matMenu" class="user-menu">
               <div class="user-info">
+                <div class="user-avatar-large">
+                  <mat-icon>account_circle</mat-icon>
+                </div>
                 <strong>{{ authService.userName() }}</strong>
                 <small>{{ authService.userRole() === 'ROLE_STUDENT' ? 'Aluno' : 'Instrutor' }}</small>
               </div>
@@ -72,20 +75,19 @@ import { AuthService } from '../../auth/services/auth-services';
                   <span>Meu Painel</span>
                 </button>
               }
-
               @if (authService.isInstructor()) {
                 <button mat-menu-item routerLink="/instrutor">
                   <mat-icon>dashboard</mat-icon>
                   <span>Painel Instrutor</span>
                 </button>
                 <button mat-menu-item routerLink="/cadastro-curso">
-                  <mat-icon>add</mat-icon>
+                  <mat-icon>add_circle</mat-icon>
                   <span>Criar Curso</span>
                 </button>
               }
 
               <mat-divider></mat-divider>
-              <button mat-menu-item (click)="logout()">
+              <button mat-menu-item (click)="logout()" class="logout-btn">
                 <mat-icon>logout</mat-icon>
                 <span>Sair</span>
               </button>
@@ -100,8 +102,11 @@ import { AuthService } from '../../auth/services/auth-services';
       position: sticky;
       top: 0;
       z-index: 1000;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      background: #bceaffff;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      color: white;
+      height: auto;
+      min-height: 64px;
     }
 
     .navbar-content {
@@ -111,63 +116,182 @@ import { AuthService } from '../../auth/services/auth-services';
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 16px;
+      padding: 0 24px;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 20px;
-      font-weight: 600;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: 700;
       cursor: pointer;
       user-select: none;
-      transition: opacity 0.2s;
-    }
+      transition: all 0.3s ease;
+      padding: 8px 12px;
+      border-radius: 10px;
+      color: white;
 
-    .brand:hover {
-      opacity: 0.8;
+      &:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: scale(1.02);
+      }
+
+      mat-icon {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
     }
 
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
+    }
+
+    .nav-btn {
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+      }
+
+      mat-icon {
+        margin-right: 6px;
+      }
+    }
+
+    .signup-btn {
+      background: white;
+      color: #667eea;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 0 24px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.95);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      mat-icon {
+        margin-right: 6px;
+      }
     }
 
     .user-menu-btn {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 8px;
+      color: white;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 6px 12px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .user-avatar {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
+
+      .user-name {
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .dropdown-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    ::ng-deep .user-menu {
+      margin-top: 8px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
     }
 
     .user-info {
-      padding: 16px;
+      padding: 24px 20px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
-    }
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
 
-    .user-info strong {
-      font-size: 14px;
-      color: rgba(0,0,0,0.87);
-    }
+      .user-avatar-large {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 4px;
 
-    .user-info small {
-      font-size: 12px;
-      color: rgba(0,0,0,0.6);
+        mat-icon {
+          font-size: 40px;
+          width: 40px;
+          height: 40px;
+          color: white;
+        }
+      }
+
+      strong {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1e293b;
+      }
+
+      small {
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 500;
+      }
     }
 
     mat-divider {
       margin: 8px 0;
     }
 
+    .logout-btn {
+      color: #ef4444;
+
+      mat-icon {
+        color: #ef4444;
+      }
+    }
+
     @media (max-width: 768px) {
+      .navbar-content {
+        padding: 0 16px;
+      }
+
       .brand span {
         display: none;
       }
 
-      .nav-links button span:not(.mat-icon) {
+      .nav-btn span:not(.user-name) {
+        display: none;
+      }
+
+      .signup-btn span {
         display: none;
       }
 
@@ -176,7 +300,20 @@ import { AuthService } from '../../auth/services/auth-services';
       }
 
       .nav-links {
-        gap: 4px;
+        gap: 8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .brand {
+        font-size: 18px;
+        padding: 6px 8px;
+
+        mat-icon {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+        }
       }
     }
   `]
