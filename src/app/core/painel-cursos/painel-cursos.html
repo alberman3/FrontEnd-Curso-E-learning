@@ -5,15 +5,38 @@
       <mat-icon>school</mat-icon>
       <span>E-learning</span>
     </div>
+
     <!-- Pesquisa -->
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Pesquisar curso</mat-label>
-      <input
-        matInput
-        placeholder="Digite o nome do curso"
-        #searchInput
-        (input)="filterCursos(searchInput.value)">
-    </mat-form-field>
+    <div class="search-container">
+      <!-- Lupa (mobile) -->
+      <button
+        mat-icon-button
+        class="search-icon"
+        (click)="toggleSearch()">
+        <mat-icon>search</mat-icon>
+      </button>
+
+      <!-- Campo de pesquisa -->
+      <mat-form-field
+        appearance="outline"
+        class="search-field"
+        [class.active]="searchOpen">
+        <mat-label>Pesquisar curso</mat-label>
+        <input
+          matInput
+          placeholder="Digite o nome do curso"
+          #searchInput
+          (input)="filterCursos(searchInput.value)">
+          <!-- BOTÃO FECHAR (X) -->
+        <button
+          mat-icon-button
+          matSuffix
+          class="close-search"
+          (click)="closeSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
 
     <!-- Abas de navegação -->
     <div class="tabs-container">

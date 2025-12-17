@@ -83,7 +83,7 @@
           color="primary"
           type="submit"
           [disabled]="isLoading || form.invalid"
-          class="full-width-btn">
+          class="rounded-btn">
           <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
           <span *ngIf="!isLoading">Cadastrar</span>
         </button>
@@ -93,7 +93,7 @@
           type="button"
           (click)="goToLogin()"
           [disabled]="isLoading"
-          class="full-width-btn">
+          class="rounded-btn">
           Já tenho conta - Fazer Login
         </button>
       </div>

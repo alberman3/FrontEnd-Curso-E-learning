@@ -81,4 +81,14 @@ export class PainelCursos implements OnInit {
   goToHome(): void {
     this.router.navigate(['/']);
   }
+
+  searchOpen = false;
+
+  toggleSearch(): void {
+    this.searchOpen = !this.searchOpen;
+  }
+
+  closeSearch(): void {
+  this.searchOpen = false;
+  }
 }
