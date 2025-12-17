@@ -9,18 +9,21 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CoursesService } from '../../courses/services/courses-services';
 import { Course } from '../../courses/model/course';
 import { RouterModule } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../auth/services/auth-services';
 
 @Component({
   selector: 'app-painel-cursos',
   standalone: true,
   imports: [
+    MatIconModule,
     CommonModule,
     MatToolbarModule,
     MatInputModule,
     MatButtonModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    RouterModule
+    RouterModule,
   ],
   templateUrl: './painel-cursos.html',
   styleUrl: './painel-cursos.scss',
@@ -42,7 +45,8 @@ export class PainelCursos implements OnInit {
 
   constructor(
     private coursesService: CoursesService,
-    private router: Router
+    private router: Router,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -72,5 +76,9 @@ export class PainelCursos implements OnInit {
 
   goToCourse(courseId: number): void {
     this.router.navigate(['/cursos', courseId]);
+  }
+
+  goToHome(): void {
+    this.router.navigate(['/']);
   }
 }

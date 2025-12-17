@@ -21,7 +21,7 @@ import { AuthService } from '../../auth/services/auth-services';
     MatDividerModule // ADICIONADO
   ],
   template: `
-    <mat-toolbar color="primary" class="navbar">
+    <mat-toolbar class="navbar">
       <div class="navbar-content">
         <!-- Logo/Brand -->
         <div class="brand" (click)="goToHome()">
@@ -51,21 +51,6 @@ import { AuthService } from '../../auth/services/auth-services';
               <mat-icon>library_books</mat-icon>
               <span>Cursos</span>
             </button>
-
-            <!-- Botão específico por role -->
-            @if (authService.isStudent()) {
-              <button mat-raised-button color="accent" routerLink="/aluno">
-                <mat-icon>dashboard</mat-icon>
-                <span>Meu Painel</span>
-              </button>
-            }
-
-            @if (authService.isInstructor()) {
-              <button mat-raised-button color="accent" routerLink="/instrutor">
-                <mat-icon>dashboard</mat-icon>
-                <span>Painel Instrutor</span>
-              </button>
-            }
 
             <!-- Menu do usuário -->
             <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-btn">
@@ -116,6 +101,7 @@ import { AuthService } from '../../auth/services/auth-services';
       top: 0;
       z-index: 1000;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: #bceaffff;
     }
 
     .navbar-content {

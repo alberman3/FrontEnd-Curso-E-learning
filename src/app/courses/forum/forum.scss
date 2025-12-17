@@ -7,6 +7,12 @@ $light-gray: #f5f5f5;
 $border-color: #eee;
 $font-stack: 'Roboto', 'Arial', sans-serif;
 
+:host {
+  display: block;
+  background: linear-gradient(135deg, #c2c2c2, #797979);
+  min-height: 100vh;
+}
+
 .forum-container {
     font-family: $font-stack;
     padding: 20px;

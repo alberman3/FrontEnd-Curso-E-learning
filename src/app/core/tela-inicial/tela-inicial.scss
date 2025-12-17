@@ -1,12 +1,11 @@
 .hero {
-  min-height: calc(100vh - 64px);
-  background: linear-gradient(135deg, #5624d0, #7c4dff);
+  min-height: calc(64vh - 64px);
+  background: linear-gradient(135deg, #c2c2c2, #797979);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 60px 20px;
 }
 
 .hero-content {
@@ -75,6 +74,10 @@
   }
 }
 
+.white-button {
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
 .footer {
   text-align: center;
   padding: 24px;

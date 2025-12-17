@@ -1,7 +1,12 @@
+:host {
+  display: block;
+  background: linear-gradient(135deg, #c2c2c2, #797979);
+  min-height: 100vh;
+}
 
 .painel-instrutor{
   padding: 32px;
-  background: #f7f9fa;
+  background: #000000;
   min-height: 100vh;
 }
 .resumo {
