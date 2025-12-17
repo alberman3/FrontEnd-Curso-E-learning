@@ -1,9 +1,10 @@
-export interface Enrollment {
+export interface EnrollmentResponseDTO {
   id: number;
-  userId: number;
+  enrollmentDate: string;
+  overallProgress: number;
+  status: 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED';
+}
+export interface EnrollmentRequestDTO {
+  studentId: number;
   courseId: number;
-  progress: number;
-  enrolledAt: string;
-  completedAt?: string;
-  completed: boolean;
 }
