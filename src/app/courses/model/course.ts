@@ -7,14 +7,13 @@ export interface Course {
   title: string;
   description: string;
   workload: number;
-
   imageUrl: string;
   price: number;
   oldPrice: number;
   isBestSeller: boolean;
-
   instructors: Instrutor[];
   categories: Categoria[];
-
   modules?: Modulo[];
+  enrolled?: boolean;
+  progress?: number;
 }

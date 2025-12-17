@@ -3,11 +3,17 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Course } from '../model/course';
 import { Modulo } from '../model/modulo';
+import { Aula } from '../model/aula';
+import { Enrollment } from '../model/enrollment';
+import { LessonProgress } from '../model/lesson-progress';
 
 export interface CreateCourseRequest {
   title: string;
   description: string;
   workload: number;
+  imageUrl?: string;
+  price?: number;
+  oldPrice?: number;
   categoryIds: number[];
   instructorIds: number[];
 }
@@ -42,7 +48,7 @@ export class CoursesService {
 
   constructor(private http: HttpClient) {}
 
-  // CURSOS GERAIS
+  // ========== CURSOS ==========
   list(): Observable<Course[]> {
     return this.http.get<Course[]>(this.API_BASE);
   }
@@ -63,17 +69,19 @@ export class CoursesService {
     return this.http.delete<void>(`${this.API_BASE}/${id}`);
   }
 
-  // CURSOS DO INSTRUTOR
   getInstructorCourses(instructorId: number): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.API_BASE}/instructor/${instructorId}`);
   }
 
-  // CURSOS DO ALUNO
   getStudentCourses(studentId: number): Observable<StudentCourse[]> {
     return this.http.get<StudentCourse[]>(`${this.API_BASE}/student/${studentId}`);
   }
 
-  // MÓDULOS
+  // ========== MÓDULOS ==========
+  getModulesByCourse(courseId: number): Observable<Modulo[]> {
+    return this.http.get<Modulo[]>(`${this.API_BASE}/${courseId}/modules`);
+  }
+
   createModule(module: CreateModuleRequest): Observable<Modulo> {
     return this.http.post<Modulo>(`${this.API_BASE}/modules`, module);
   }
@@ -86,16 +94,65 @@ export class CoursesService {
     return this.http.delete<void>(`${this.API_BASE}/modules/${id}`);
   }
 
-  // AULAS
-  createLesson(lesson: CreateLessonRequest): Observable<any> {
-    return this.http.post<any>(`${this.API_BASE}/lessons`, lesson);
+  // ========== AULAS ==========
+  getLessonsByModule(moduleId: number): Observable<Aula[]> {
+    return this.http.get<Aula[]>(`${this.API_BASE}/modules/${moduleId}/lessons`);
   }
 
-  updateLesson(id: number, lesson: CreateLessonRequest): Observable<any> {
-    return this.http.put<any>(`${this.API_BASE}/lessons/${id}`, lesson);
+  createLesson(lesson: CreateLessonRequest): Observable<Aula> {
+    return this.http.post<Aula>(`${this.API_BASE}/lessons`, lesson);
+  }
+
+  updateLesson(id: number, lesson: CreateLessonRequest): Observable<Aula> {
+    return this.http.put<Aula>(`${this.API_BASE}/lessons/${id}`, lesson);
   }
 
   deleteLesson(id: number): Observable<void> {
     return this.http.delete<void>(`${this.API_BASE}/lessons/${id}`);
+  }
+
+  // ========== MATRÍCULA ==========
+  enroll(courseId: number, userId: number): Observable<Enrollment> {
+    return this.http.post<Enrollment>(`${this.API_BASE}/${courseId}/enroll`, { userId });
+  }
+
+  getEnrollment(courseId: number, userId: number): Observable<Enrollment | null> {
+    return this.http.get<Enrollment | null>(
+      `${this.API_BASE}/${courseId}/enrollment/${userId}`
+    );
+  }
+
+  // ========== PROGRESSO ==========
+  markLessonComplete(enrollmentId: number, lessonId: number): Observable<LessonProgress> {
+    return this.http.post<LessonProgress>(
+      `${this.API_BASE}/progress/complete`,
+      { enrollmentId, lessonId }
+    );
+  }
+
+  getLessonProgress(enrollmentId: number): Observable<LessonProgress[]> {
+    return this.http.get<LessonProgress[]>(
+      `${this.API_BASE}/progress/${enrollmentId}`
+    );
+  }
+
+  getCourseProgress(courseId: number, userId: number): Observable<{
+    progress: number;
+    completedLessons: number;
+    totalLessons: number;
+  }> {
+    return this.http.get<any>(
+      `${this.API_BASE}/${courseId}/progress/${userId}`
+    );
+  }
+
+  // ========== CATEGORIAS ==========
+  getCategories(): Observable<any[]> {
+    return this.http.get<any[]>('/categories');
+  }
+
+  // ========== INSTRUTORES ==========
+  getInstructors(): Observable<any[]> {
+    return this.http.get<any[]>('/instructors');
   }
 }

@@ -1,115 +1,214 @@
 <div class="course-dashboard-wrapper">
 
-  <main class="video-content-area">
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Carregando curso...</p>
+    </div>
+  } @else {
 
+    <!-- Header -->
     <header class="course-header">
-  <button
-    type = "button"
-    class="btn-back"
-    routerLink="/cursos"
-    aria-label="Voltar para o painel de cursos">
-    <i class="fas fa-arrow-left" aria-hidden="true"></i>
-    <span>Voltar para cursos</span>
-  </button>
+      <button
+        type="button"
+        class="btn-back"
+        (click)="goBack()"
+        aria-label="Voltar para o painel de cursos">
+        <mat-icon>arrow_back</mat-icon>
+        <span>Voltar para cursos</span>
+      </button>
 
-</header>
-
-    <div class="video-player-container">
-      <div class="video-placeholder">
-        <i class="fas fa-play-circle play-icon"></i>
-        <span class="video-msg">Selecione uma aula para assistir</span>
-      </div>
-    </div>
-
-    <div class="lesson-navigation">
-      <h2 class="current-lesson-title">Aula 1: Introdução ao Angular e Arquitetura</h2>
-      <div class="nav-buttons">
-        <button class="btn-nav"><i class="fas fa-chevron-left"></i> Anterior</button>
-        <button class="btn-nav">Próximo <i class="fas fa-chevron-right"></i></button>
-      </div>
-    </div>
-
-    <div class="course-tabs">
-      <nav class="tab-nav">
-        <button class="tab-btn active">Visão Geral</button>
-        <button class="tab-btn">Materiais</button>
-      </nav>
-
-      <div class="tab-content">
-        <h3>Sobre esta aula</h3>
-        <p>Nesta aula, vamos entender como funciona a estrutura de pastas do Angular e o conceito de Componentes e Módulos.</p>
-
+      @if (course()) {
+        <div class="course-title-header">
+          <h1>{{ course()!.title }}</h1>
+          <p>{{ course()!.description }}</p>
         </div>
-    </div>
-  </main>
+      }
+    </header>
 
-  <aside class="course-sidebar">
+    <div class="content-layout">
 
-    <div class="sidebar-header">
-      <h3>Conteúdo do Curso</h3>
-      <div class="progress-section">
-        <div class="progress-info">
-          <span>Progresso: 35%</span>
-          <i class="fas fa-trophy"></i>
-        </div>
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fill" style="width: 35%;"></div>
-        </div>
-      </div>
-    </div>
+      <!-- Área principal: Vídeo/Conteúdo -->
+      <main class="video-content-area">
 
-    <div class="modules-list">
+        @if (!isEnrolled()) {
+          <!-- Tela de Matrícula -->
+          <mat-card class="enrollment-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>school</mat-icon>
+                Faça sua matrícula
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p>Matricule-se neste curso para acessar todo o conteúdo e acompanhar seu progresso.</p>
 
-      <div class="module-item open">
-        <div class="module-header">
-          <div class="module-title">
-            <strong>Módulo 1: Fundamentos</strong>
-            <span class="module-duration">45min</span>
+              <div class="course-details">
+                <div class="detail-item">
+                  <mat-icon>schedule</mat-icon>
+                  <span>{{ course()?.workload }}h de conteúdo</span>
+                </div>
+                <div class="detail-item">
+                  <mat-icon>menu_book</mat-icon>
+                  <span>{{ modules().length }} módulos</span>
+                </div>
+                <div class="detail-item">
+                  <mat-icon>play_circle</mat-icon>
+                  <span>{{ getTotalLessons() }} aulas</span>
+                </div>
+              </div>
+
+              @if (course()?.price && course()!.price > 0) {
+                <div class="price-section">
+                  @if (course()!.oldPrice > course()!.price) {
+                    <span class="old-price">R$ {{ course()!.oldPrice }}</span>
+                  }
+                  <span class="price">R$ {{ course()!.price }}</span>
+                </div>
+              }
+            </mat-card-content>
+            <mat-card-actions>
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="enroll()"
+                [disabled]="!authService.isStudent()">
+                <mat-icon>check_circle</mat-icon>
+                Matricular-se Agora
+              </button>
+
+              @if (!authService.isStudent()) {
+                <p class="warning-text">
+                  <mat-icon>info</mat-icon>
+                  Apenas alunos podem se matricular
+                </p>
+              }
+            </mat-card-actions>
+          </mat-card>
+
+        } @else {
+          <!-- Área do Player de Vídeo -->
+          <div class="video-player-container">
+            @if (currentLesson()) {
+              @if (safeVideoUrl()) {
+                <iframe
+                  [src]="safeVideoUrl()"
+                  [title]="'Vídeo da aula: ' + currentLesson()!.title"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen>
+                </iframe>
+              } @else {
+                <div class="video-placeholder">
+                  <mat-icon class="play-icon">play_circle</mat-icon>
+                  <span class="video-msg">Esta aula não possui vídeo</span>
+                </div>
+              }
+            } @else {
+              <div class="video-placeholder">
+                <mat-icon class="play-icon">play_circle</mat-icon>
+                <span class="video-msg">Selecione uma aula para começar</span>
+              </div>
+            }
           </div>
-          <i class="fas fa-chevron-up"></i>
-        </div>
 
-        <ul class="lesson-list">
-          <li class="lesson-item active">
-            <input type="checkbox" checked class="lesson-check">
-            <div class="lesson-info">
-              <span class="lesson-name">1. Introdução ao Angular</span>
-              <span class="lesson-time"><i class="far fa-play-circle"></i> 10:00</span>
+          <!-- Conteúdo da Aula -->
+          @if (currentLesson()) {
+            <div class="lesson-content">
+              <h2>{{ currentLesson()!.title }}</h2>
+              <div class="lesson-text">
+                {{ currentLesson()!.content }}
+              </div>
             </div>
-          </li>
+          }
+        }
 
-          <li class="lesson-item">
-            <input type="checkbox" class="lesson-check">
-            <div class="lesson-info">
-              <span class="lesson-name">2. Instalando o Ambiente</span>
-              <span class="lesson-time"><i class="far fa-play-circle"></i> 15:00</span>
+      </main>
+
+      <!-- Sidebar: Módulos e Aulas -->
+      <aside class="course-sidebar">
+
+        <div class="sidebar-header">
+          <h3>Conteúdo do Curso</h3>
+
+          @if (isEnrolled()) {
+            <div class="progress-section">
+              <div class="progress-info">
+                <span>Progresso: {{ progress() }}%</span>
+                <mat-icon>emoji_events</mat-icon>
+              </div>
+              <mat-progress-bar
+                mode="determinate"
+                [value]="progress()">
+              </mat-progress-bar>
             </div>
-          </li>
-        </ul>
-      </div>
-
-      <div class="module-item">
-        <div class="module-header">
-          <div class="module-title">
-            <strong>Módulo 2: Componentes</strong>
-            <span class="module-duration">1h 20min</span>
-          </div>
-          <i class="fas fa-chevron-down"></i>
-        </div>
+          }
         </div>
 
-      <div class="module-item">
-        <div class="module-header">
-          <div class="module-title">
-            <strong>Módulo 3: Rotas e Serviços</strong>
-            <span class="module-duration">55min</span>
+        <mat-accordion class="modules-accordion">
+          @for (module of modules(); track module.id) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <strong>Módulo {{ module.order }}: {{ module.title }}</strong>
+                </mat-panel-title>
+                <mat-panel-description>
+                  {{ module.lessons?.length || 0 }} aulas
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+
+              <div class="lessons-list">
+                @for (lesson of module.lessons; track lesson.id) {
+                  <button
+                    type="button"
+                    class="lesson-item"
+                    [class.active]="currentLesson()?.id === lesson.id"
+                    [class.locked]="!canAccessLesson(lesson)"
+                    [disabled]="!canAccessLesson(lesson)"
+                    (click)="selectLesson(lesson)"
+                    [attr.aria-label]="'Aula ' + lesson.order + ': ' + lesson.title + (completedLessons().has(lesson.id) ? ' - Concluída' : '')">
+
+                    @if (isEnrolled()) {
+                      <mat-checkbox
+                        [checked]="completedLessons().has(lesson.id)"
+                        [disabled]="!canAccessLesson(lesson)"
+                        (change)="toggleLessonComplete(lesson, $event)"
+                        (click)="$event.stopPropagation()"
+                        (keydown)="$event.stopPropagation()"
+                        [attr.aria-label]="'Marcar aula ' + lesson.title + ' como concluída'">
+                      </mat-checkbox>
+                    }
+
+                    <div class="lesson-info">
+                      <span class="lesson-name">
+                        {{ lesson.order }}. {{ lesson.title }}
+                      </span>
+                      @if (lesson.videoUrl) {
+                        <mat-icon class="video-icon" aria-hidden="true">play_circle_outline</mat-icon>
+                      }
+                    </div>
+
+                    @if (!canAccessLesson(lesson)) {
+                      <mat-icon class="lock-icon" aria-hidden="true">lock</mat-icon>
+                    }
+                  </button>
+                }
+              </div>
+
+            </mat-expansion-panel>
+          }
+        </mat-accordion>
+
+        @if (modules().length === 0) {
+          <div class="empty-modules">
+            <mat-icon>info</mat-icon>
+            <p>Este curso ainda não possui módulos cadastrados.</p>
           </div>
-          <i class="fas fa-chevron-down"></i>
-        </div>
-      </div>
+        }
+
+      </aside>
 
     </div>
-  </aside>
+
+  }
 
 </div>
-

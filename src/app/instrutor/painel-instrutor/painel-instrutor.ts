@@ -8,6 +8,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider'; // ADICIONADO
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { NavbarComponent } from '../../shared/components/navbar.component';
 import { CoursesService } from '../../courses/services/courses-services';
 import { AuthService } from '../../auth/services/auth-services';
@@ -26,164 +28,11 @@ import { Course } from '../../courses/model/course';
     MatIconModule,
     MatDialogModule,
     MatMenuModule,
+    MatDividerModule,
+    MatSnackBarModule,
     NavbarComponent
   ],
-  template: `
-    <!-- Navbar -->
-    <app-navbar></app-navbar>
-
-    <div class="painel-instrutor-container">
-      <!-- Header -->
-      <header class="header">
-        <div class="header-content">
-          <h1>Painel do Instrutor</h1>
-          <p>Bem-vindo, {{ authService.userName() }}!</p>
-        </div>
-        <div class="header-actions">
-          <button mat-raised-button color="primary" (click)="createNewCourse()">
-            <mat-icon>add</mat-icon>
-            Novo Curso
-          </button>
-        </div>
-      </header>
-
-      <!-- Stats Cards -->
-      <div class="stats-container">
-        <mat-card class="stat-card">
-          <mat-icon>school</mat-icon>
-          <div class="stat-info">
-            <h3>{{ courses().length }}</h3>
-            <p>Cursos Criados</p>
-          </div>
-        </mat-card>
-
-        <mat-card class="stat-card">
-          <mat-icon>menu_book</mat-icon>
-          <div class="stat-info">
-            <h3>{{ getTotalModules() }}</h3>
-            <p>Módulos</p>
-          </div>
-        </mat-card>
-
-        <mat-card class="stat-card">
-          <mat-icon>schedule</mat-icon>
-          <div class="stat-info">
-            <h3>{{ getTotalWorkload() }}h</h3>
-            <p>Carga Horária Total</p>
-          </div>
-        </mat-card>
-      </div>
-
-      <!-- Loading -->
-      @if (isLoading()) {
-        <div class="loading-container">
-          <mat-spinner></mat-spinner>
-          <p>Carregando seus cursos...</p>
-        </div>
-      }
-
-      <!-- Error -->
-      @if (error()) {
-        <div class="error-container">
-          <mat-icon color="warn">error</mat-icon>
-          <p>{{ error() }}</p>
-          <button mat-raised-button color="primary" (click)="loadCourses()">
-            Tentar Novamente
-          </button>
-        </div>
-      }
-
-      <!-- Courses List -->
-      @if (!isLoading() && !error()) {
-        <section class="courses-section">
-          <h2>
-            <mat-icon>library_books</mat-icon>
-            Meus Cursos
-          </h2>
-
-          @if (courses().length === 0) {
-            <div class="empty-state">
-              <mat-icon>school</mat-icon>
-              <h3>Nenhum curso criado ainda</h3>
-              <p>Comece criando seu primeiro curso e compartilhe seu conhecimento!</p>
-              <button mat-raised-button color="primary" (click)="createNewCourse()">
-                <mat-icon>add</mat-icon>
-                Criar Primeiro Curso
-              </button>
-            </div>
-          } @else {
-            <div class="courses-grid">
-              @for (course of courses(); track course.id) {
-                <mat-card class="course-card">
-                  <mat-card-header>
-                    <mat-card-title>{{ course.title }}</mat-card-title>
-                    <mat-card-subtitle>
-                      <mat-chip-set>
-                        @for (cat of course.categories; track cat.id) {
-                          <mat-chip>{{ cat.name }}</mat-chip>
-                        }
-                      </mat-chip-set>
-                    </mat-card-subtitle>
-                    <button mat-icon-button [matMenuTriggerFor]="menu">
-                      <mat-icon>more_vert</mat-icon>
-                    </button>
-                    <mat-menu #menu="matMenu">
-                      <button mat-menu-item (click)="viewCourse(course.id)">
-                        <mat-icon>visibility</mat-icon>
-                        <span>Visualizar</span>
-                      </button>
-                      <button mat-menu-item (click)="editCourse(course.id)">
-                        <mat-icon>edit</mat-icon>
-                        <span>Editar</span>
-                      </button>
-                      <button mat-menu-item (click)="addModule(course.id)">
-                        <mat-icon>add_box</mat-icon>
-                        <span>Adicionar Módulo</span>
-                      </button>
-                      <button mat-menu-item (click)="deleteCourse(course.id)" class="delete-option">
-                        <mat-icon>delete</mat-icon>
-                        <span>Excluir</span>
-                      </button>
-                    </mat-menu>
-                  </mat-card-header>
-
-                  <mat-card-content>
-                    <p>{{ course.description }}</p>
-
-                    <div class="course-stats">
-                      <div class="stat">
-                        <mat-icon>schedule</mat-icon>
-                        <span>{{ course.workload }}h</span>
-                      </div>
-                      <div class="stat">
-                        <mat-icon>menu_book</mat-icon>
-                        <span>{{ course.modules?.length || 0 }} módulos</span>
-                      </div>
-                    </div>
-                  </mat-card-content>
-
-                  <mat-card-actions>
-                    <button mat-button (click)="viewCourse(course.id)">
-                      <mat-icon>visibility</mat-icon>
-                      Visualizar
-                    </button>
-                    <button mat-button color="primary" (click)="editCourse(course.id)">
-                      <mat-icon>edit</mat-icon>
-                      Editar
-                    </button>
-                    <button mat-button color="accent" (click)="addModule(course.id)">
-                      <mat-icon>add</mat-icon>
-                      Módulo
-                    </button>
-                  </mat-card-actions>
-                </mat-card>
-              }
-            </div>
-          }
-        </section>
-      }
-    </div>
-  `,
+  templateUrl: './painel-instrutor.html',
   styleUrl: './painel-instrutor.scss',
 })
 export class PainelInstrutor implements OnInit {
@@ -195,7 +44,8 @@ export class PainelInstrutor implements OnInit {
     private coursesService: CoursesService,
     public authService: AuthService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -237,22 +87,29 @@ export class PainelInstrutor implements OnInit {
     this.router.navigate(['/cadastro-modulo'], { queryParams: { courseId } });
   }
 
+  addLesson(courseId: number): void {
+    this.router.navigate(['/cadastro-aula'], { queryParams: { courseId } });
+  }
+
   viewCourse(courseId: number): void {
     this.router.navigate(['/cursos', courseId]);
   }
 
   deleteCourse(courseId: number): void {
-    if (confirm('Tem certeza que deseja excluir este curso?')) {
-      this.coursesService.delete(courseId).subscribe({
-        next: () => {
-          this.loadCourses();
-        },
-        error: (err) => {
-          console.error('Erro ao excluir curso:', err);
-          alert('Erro ao excluir curso');
-        }
-      });
+    if (!confirm('Tem certeza que deseja excluir este curso? Esta ação não pode ser desfeita.')) {
+      return;
     }
+
+    this.coursesService.delete(courseId).subscribe({
+      next: () => {
+        this.snackBar.open('Curso excluído com sucesso', 'OK', { duration: 2000 });
+        this.loadCourses();
+      },
+      error: (err) => {
+        console.error('Erro ao excluir curso:', err);
+        this.snackBar.open('Erro ao excluir curso', 'Fechar', { duration: 3000 });
+      }
+    });
   }
 
   getTotalModules(): number {
@@ -265,5 +122,11 @@ export class PainelInstrutor implements OnInit {
     return this.courses().reduce((total, course) =>
       total + course.workload, 0
     );
+  }
+
+  // NOVO MÉTODO: Calcular total de aulas por curso
+  getCourseLessonsCount(course: Course): number {
+    if (!course.modules) return 0;
+    return course.modules.reduce((sum, m) => sum + (m.lessons?.length || 0), 0);
   }
 }

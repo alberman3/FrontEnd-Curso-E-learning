@@ -9,24 +9,54 @@ import { CadastroCurso } from './courses/cadastro-curso/cadastro-curso';
 import { CadastroAula } from './courses/cadastro-aula/cadastro-aula';
 import { CadastroModulo } from './courses/cadastro-modulo/cadastro-modulo';
 import { AvaliacaoCurso } from './courses/avaliacao-curso/avaliacao-curso';
-import { Forum } from './courses/forum/forum';
-
 
 export const routes: Routes = [
   { path: '', component: TelaInicial },
   { path: 'login', component: Login },
   { path: 'cadastro', component: CadastroUsuario },
 
-  { path: 'cadastro-curso', component: CadastroCurso, canActivate: [authGuard, instructorGuard] },
-  { path: 'cadastro-aula', component: CadastroAula, canActivate: [authGuard, instructorGuard] },
-  { path: 'cadastro-modulo', component: CadastroModulo, canActivate: [authGuard, instructorGuard] },
+  // Rotas do instrutor (protegidas)
+  {
+    path: 'cadastro-curso',
+    component: CadastroCurso,
+    canActivate: [authGuard, instructorGuard]
+  },
+  {
+    path: 'cadastro-aula',
+    component: CadastroAula,
+    canActivate: [authGuard, instructorGuard]
+  },
+  {
+    path: 'cadastro-modulo',
+    component: CadastroModulo,
+    canActivate: [authGuard, instructorGuard]
+  },
+  {
+    path: 'instrutor',
+    component: PainelInstrutor,
+    canActivate: [authGuard, instructorGuard]
+  },
 
+  // Rotas do aluno (protegidas)
+  {
+    path: 'aluno',
+    component: PainelAluno,
+    canActivate: [authGuard, studentGuard]
+  },
+
+  // Rotas gerais autenticadas
+  {
+    path: 'avaliar-curso',
+    component: AvaliacaoCurso,
+    canActivate: [authGuard]
+  },
+
+  // Módulo de cursos (lazy loading)
   {
     path: 'cursos',
     loadChildren: () => import('./courses/courses-module').then(m => m.CoursesModule)
-  },{ path: 'forum', component: Forum },
-  { path: 'aluno', component: PainelAluno, canActivate: [authGuard, studentGuard] },
-  { path: 'instrutor', component: PainelInstrutor, canActivate: [authGuard, instructorGuard] },
-  { path: 'avaliar-curso', component: AvaliacaoCurso, canActivate: [authGuard] },
+  },
+
+  // Fallback
   { path: '**', redirectTo: '' }
 ];

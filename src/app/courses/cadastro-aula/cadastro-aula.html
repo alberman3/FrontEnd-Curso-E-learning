@@ -1,52 +1,95 @@
 <div class="home-container">
-
   <div class="hero">
     <h1>Plataforma E-learning</h1>
     <p>Aprenda, ensine e acompanhe seu progresso em um só lugar.</p>
   </div>
 
   <div class="card">
-    <h2>Cadastro Aula</h2>
-    <p>Digite os dados abaixo</p>
+    <h2>Cadastro de Aula</h2>
+    <p>Adicione uma nova aula ao curso</p>
 
-    <div class="form-group">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Título da Aula</mat-label>
-        <input matInput type="email" placeholder="Digite seu email">
-      </mat-form-field>
-    </div>
+    @if (isLoading()) {
+      <div style="text-align: center; padding: 20px;">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-    <div class="form-group">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Conteúdo</mat-label>
-        <input matInput type="password" placeholder="Digite sua senha">
-      </mat-form-field>
-    </div>
+        <div class="form-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Módulo</mat-label>
+            <mat-select formControlName="moduleId">
+              @for (mod of modules(); track mod.id) {
+                <mat-option [value]="mod.id">
+                  Módulo {{ mod.order }}: {{ mod.title }}
+                </mat-option>
+              }
+            </mat-select>
+            <mat-error *ngIf="form.get('moduleId')?.hasError('required')">
+              Selecione um módulo
+            </mat-error>
+          </mat-form-field>
+        </div>
 
-    <div class="form-group">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Vídeo/Link</mat-label>
-        <input matInput type="password" placeholder="Digite sua senha">
-      </mat-form-field>
-    </div>
+        <div class="form-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Título da Aula</mat-label>
+            <input matInput formControlName="title" placeholder="Ex: Criando seu primeiro componente">
+            <mat-error *ngIf="form.get('title')?.hasError('required')">
+              Título é obrigatório
+            </mat-error>
+          </mat-form-field>
+        </div>
 
-    <button
-      mat-raised-button
-      class="rounded-btn"
-      color="primary">
-      Confirmar
-    </button>
+        <div class="form-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Conteúdo</mat-label>
+            <textarea
+              matInput
+              formControlName="content"
+              rows="6"
+              placeholder="Descreva o conteúdo da aula"></textarea>
+            <mat-error *ngIf="form.get('content')?.hasError('required')">
+              Conteúdo é obrigatório
+            </mat-error>
+          </mat-form-field>
+        </div>
 
-    <button
-      mat-raised-button
-      class="rounded-btn"
-      color="primary">
-      Cancelar
-    </button>
+        <div class="form-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Vídeo/Link (YouTube, Vimeo, etc.)</mat-label>
+            <input matInput formControlName="videoUrl" placeholder="https://youtube.com/watch?v=...">
+            <mat-hint>URL do vídeo da aula (opcional)</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Ordem</mat-label>
+            <input matInput type="number" formControlName="order">
+            <mat-hint>Ordem de exibição da aula no módulo</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="button-group">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="form.invalid || isLoading()">
+            Criar Aula
+          </button>
+
+          <button
+            mat-raised-button
+            type="button"
+            (click)="cancel()">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    }
   </div>
 
-  <footer class="footer">
-    © Plataforma E-learning
-  </footer>
-
+  <footer class="footer">© Plataforma E-learning</footer>
 </div>
