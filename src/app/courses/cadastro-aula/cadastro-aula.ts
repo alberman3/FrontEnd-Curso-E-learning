@@ -10,6 +10,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CoursesService } from '../services/courses-services';
 import { Modulo } from '../model/modulo';
+import { CreateLessonRequest } from '../services/courses-services';
+
 
 @Component({
   selector: 'app-cadastro-aula',
@@ -101,11 +103,12 @@ export class CadastroAula implements OnInit {
 
     const moduleId = this.form.value.moduleId;
 
-    const lessonPayload = {
+    const lessonPayload: CreateLessonRequest = {
       title: this.form.value.title,
       content: this.form.value.content,
       videoUrl: this.form.value.videoUrl,
-      order: this.form.value.order
+      order: this.form.value.order,
+      moduleId: moduleId
     };
 
     this.coursesService

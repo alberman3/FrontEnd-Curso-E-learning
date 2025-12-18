@@ -25,14 +25,16 @@ export interface CreateModuleRequest {
   title: string;
   description: string;
   order: number;
+  courseId: number;
 
 }
 
 export interface CreateLessonRequest {
-    title: string;
+  title: string;
   content: string;
   videoUrl?: string;
   order: number;
+  moduleId: number;
 }
 
 export interface StudentCourse {
@@ -59,15 +61,15 @@ export class CoursesService {
   }
 
   create(course: CreateCourseRequest): Observable<Course> {
-    return this.http.post<Course>(this.API_BASE, course);
+    return this.http.post<Course>(`${this.API_BASE}/create`, course);
   }
 
   update(id: number, course: CreateCourseRequest): Observable<Course> {
-    return this.http.put<Course>(`${this.API_BASE}/${id}`, course);
+    return this.http.put<Course>(`${this.API_BASE}/update/${id}`, course);
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.API_BASE}/${id}`);
+    return this.http.delete<void>(`${this.API_BASE}/delete/${id}`);
   }
 
   getInstructorCourses(instructorId: number): Observable<Course[]> {

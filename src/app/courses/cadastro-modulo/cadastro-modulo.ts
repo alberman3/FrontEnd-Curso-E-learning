@@ -8,6 +8,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CoursesService } from '../services/courses-services';
+import { CreateModuleRequest } from '../services/courses-services';
+
 
 @Component({
   selector: 'app-cadastro-modulo',
@@ -89,10 +91,11 @@ export class CadastroModulo implements OnInit {
 
     this.isLoading.set(true);
 
-    const payload = {
+    const payload: CreateModuleRequest = {
   title: this.form.value.title,
   description: this.form.value.description,
-  order: this.form.value.order
+  order: this.form.value.order,
+  courseId: this.courseId
 };
 
 this.coursesService
