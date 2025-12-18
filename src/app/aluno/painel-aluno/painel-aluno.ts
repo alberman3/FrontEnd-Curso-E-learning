@@ -211,7 +211,7 @@ import { AuthService } from '../../auth/services/auth-services';
                         </span>
                         <span>
                           <mat-icon>event</mat-icon>
-                          Concluído em {{ item.enrolledAt | date: 'dd/MM/yyyy' }}
+                         
                         </span>
                       </div>
                     </mat-card-content>

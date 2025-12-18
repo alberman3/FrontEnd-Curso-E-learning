@@ -173,13 +173,12 @@ enroll(courseId: number, studentId: number) {
   );
 }
 
-  getEnrollment(
-  courseId: number,
-  userId: number
-): Observable<EnrollmentResponseDTO | null> {
-  return this.http.get<EnrollmentResponseDTO | null>(
-    `${this.API_BASE}/${courseId}/enrollment/${userId}`
-  );
+ // No CoursesService
+getEnrollment(courseId: number, userId: number): Observable<EnrollmentResponseDTO | null> {
+  return this.http.get<EnrollmentResponseDTO[]>(`/enrollments/student/${userId}`)
+    .pipe(
+      map(enrollments => enrollments.find(e => e.course.id === courseId) || null)
+    );
 }
 
 
