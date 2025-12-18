@@ -60,11 +60,11 @@ export class CoursesService {
   }
 
   create(course: CreateCourseRequest): Observable<Course> {
-    return this.http.post<Course>(`${this.API_BASE}/create`, course);
+    return this.http.post<Course>(this.API_BASE, course);
   }
 
   update(id: number, course: CreateCourseRequest): Observable<Course> {
-    return this.http.put<Course>(`${this.API_BASE}/update/${id}`, course);
+  return this.http.put<Course>(`${this.API_BASE}/${id}`, course);
   }
 
   delete(id: number): Observable<void> {
@@ -168,7 +168,7 @@ deleteLesson(
   // ========== MATRÍCULA ==========
 enroll(courseId: number, studentId: number) {
   return this.http.post<EnrollmentResponseDTO>(
-    '/enrollments/create',
+    '/enrollments', // Removido o /create
     { courseId, studentId }
   );
 }
