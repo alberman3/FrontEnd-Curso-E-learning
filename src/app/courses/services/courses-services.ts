@@ -19,8 +19,6 @@ export interface CreateCourseRequest {
   instructorIds: number[];
 }
 
-
-
 export interface CreateModuleRequest {
   title: string;
   description: string;
@@ -75,11 +73,11 @@ export class CoursesService {
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.API_BASE}/delete/${id}`);
+    return this.http.delete<void>(`${this.API_BASE}/${id}`);
   }
 
   getInstructorCourses(instructorId: number): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.API_BASE}/instructor/${instructorId}`);
+    return this.http.get<Course[]>(`/instructors/${instructorId}/my-courses`);
   }
 
  getStudentCourses(studentId: number) {
@@ -104,7 +102,7 @@ export class CoursesService {
   }
 createModule(courseId: number, payload: CreateModuleRequest): Observable<Modulo> {
     return this.http.post<Modulo>(
-      `${this.API_BASE}/${courseId}/modules/create`,
+      `${this.API_BASE}/${courseId}/modules`,
       payload
     );
   }
@@ -148,7 +146,7 @@ createModule(courseId: number, payload: CreateModuleRequest): Observable<Modulo>
     payload: CreateLessonRequest
   ): Observable<Aula> {
     return this.http.post<Aula>(
-      `${this.API_BASE}/${courseId}/modules/${moduleId}/lessons/create`,
+      `${this.API_BASE}/${courseId}/modules/${moduleId}/lessons`,
       payload
     );
   }
@@ -178,7 +176,7 @@ deleteLesson(
   // ========== MATRÍCULA ==========
 enroll(courseId: number, studentId: number): Observable<EnrollmentResponseDTO> {
     return this.http.post<EnrollmentResponseDTO>(
-      '/enrollments/create',
+      '/enrollments',
       { courseId, studentId }
     );
   }
@@ -221,7 +219,7 @@ getEnrollment(courseId: number, userId: number): Observable<EnrollmentResponseDT
     totalLessons: number;
   }> {
     return this.http.get<any>(
-      `${this.API_BASE}/${courseId}/progress/${userId}`
+      `${this.API_BASE}/${courseId}/progress`
     );
   }
 
