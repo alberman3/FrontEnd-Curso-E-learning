@@ -107,7 +107,7 @@ export class CadastroAula implements OnInit {
       title: this.form.value.title,
       content: this.form.value.content,
       videoUrl: this.form.value.videoUrl,
-      order: this.form.value.order,
+      lessonOrder: this.form.value.order,
       moduleId: moduleId
     };
 

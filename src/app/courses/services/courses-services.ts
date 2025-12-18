@@ -31,7 +31,7 @@ export interface CreateLessonRequest {
   title: string;
   content: string;
   videoUrl?: string;
-  order: number;
+  lessonOrder: number;
   moduleId: number;
 }
 
@@ -98,7 +98,7 @@ export class CoursesService {
 
   // ========== MÓDULOS ==========
  getModulesByCourse(courseId: number): Observable<Modulo[]> {
-    return this.http.get<Modulo[]>(`${this.API_BASE}/${courseId}/moduled`);
+    return this.http.get<Modulo[]>(`${this.API_BASE}/${courseId}/modules`);
   }
 createModule(courseId: number, payload: CreateModuleRequest): Observable<Modulo> {
     return this.http.post<Modulo>(
