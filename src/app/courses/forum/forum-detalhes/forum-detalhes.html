@@ -1,77 +1,168 @@
 <div class="topic-details-container">
-
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Carregando...</p>
+    </div>
+  } @else if (topic()) {
     <header class="topic-header">
-        <a routerLink="../" class="back-link">
-            <i class="fas fa-arrow-left"></i> Voltar para o Fórum
-        </a>
+      <button mat-button class="back-link" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar para o Fórum
+      </button>
 
-        <div class="topic-title-area">
-            <h1>Como faço para usar o operador 'switchMap' corretamente em um fluxo RxJS?</h1>
-            <span class="status-tag status-resolved">RESOLVIDA</span>
-            </div>
+      <div class="topic-title-area">
+        <h1>{{ topic()!.title }}</h1>
+        <mat-chip-set>
+          <mat-chip [class.status-resolved]="topic()!.responses.length > 0"
+                    [class.status-unanswered]="topic()!.responses.length === 0">
+            {{ topic()!.responses.length > 0 ? 'RESOLVIDA' : 'SEM RESPOSTA' }}
+          </mat-chip>
+        </mat-chip-set>
+      </div>
 
-        <div class="topic-info">
-            Postado por:
-            <span class="author-name">Carlos Eduardo</span> |
-            <span class="post-date">em 10 de Dezembro de 2025</span> |
-            <span class="module-name">Módulo 5: RxJS Avançado</span>
-        </div>
+      <div class="topic-info">
+        Postado por:
+        <span class="author-name">{{ topic()!.user.name }}</span> |
+        <span class="post-date">em {{ formatDate(topic()!.creationDate) }}</span> |
+        <span class="module-name">{{ topic()!.courseTitle }}</span>
+      </div>
     </header>
 
     <section class="original-question">
-        <p>Olá, pessoal! Estou tendo dificuldades para entender a diferença entre `switchMap` e `mergeMap`. Meu cenário é que, ao receber um ID de usuário, eu preciso buscar o perfil e, em seguida, buscar os últimos 5 pedidos desse usuário.</p>
-        <p>Tentei usar o `mergeMap`, mas estou vendo requisições sendo misturadas se o ID mudar muito rápido. Devo usar `switchMap` para cancelar a requisição anterior?</p>
-
-        <div class="question-actions">
-            <button class="action-btn"><i class="fas fa-thumbs-up"></i> Útil (4)</button>
-            <button class="action-btn favorite"><i class="fas fa-bookmark"></i> Salvar</button>
-        </div>
+      <mat-card>
+        <mat-card-content>
+          <p class="question-content">{{ topic()!.content }}</p>
+        </mat-card-content>
+      </mat-card>
     </section>
 
-    <hr class="divider">
+    <mat-divider class="divider"></mat-divider>
 
     <section class="answers-section">
-        <h2>3 Respostas</h2>
+      <h2>{{ topic()!.responses.length }} Respostas</h2>
 
+      @for (response of topic()!.responses; track response.id) {
         <article class="answer-item">
-            <div class="answer-header">
-                <span class="user-avatar">I</span>
-                <div class="user-info">
-                    <span class="user-name">João da Silva</span>
-                    <span class="user-role instructor">INSTRUTOR</span>
-                    <span class="answer-date">respondeu há 50 minutos</span>
-                </div>
-                <i class="fas fa-check-circle best-answer-icon"></i> </div>
-            <div class="answer-body">
-                <p>Ótima pergunta, Carlos! Para o seu cenário, o **`switchMap`** é o mais indicado. Ele é ideal justamente para a lógica de "cancelamento": se uma nova fonte de dados (o novo ID de usuário) chegar antes da requisição anterior terminar, o `switchMap` cancela automaticamente a requisição antiga e inicia a nova.</p>
-                <p>O `mergeMap` deixa todas as requisições em paralelo, o que pode levar a resultados misturados se a ordem de chegada for importante.</p>
-            </div>
-            <div class="answer-footer">
-                <button class="action-btn"><i class="fas fa-thumbs-up"></i> Agradecer</button>
-            </div>
-        </article>
+          <mat-card>
+            <mat-card-header>
+              <div class="user-avatar">{{ response.user.name.charAt(0).toUpperCase() }}</div>
+              <div class="user-info">
+                <span class="user-name">{{ response.user.name }}</span>
+                @if (response.user.role === 'ROLE_INSTRUCTOR') {
+                  <mat-chip class="user-role instructor">INSTRUTOR</mat-chip>
+                }
+                <span class="answer-date">respondeu {{ formatDate(response.creationDate) }}</span>
+              </div>
 
-        <article class="answer-item">
-            <div class="answer-header">
-                <span class="user-avatar">M</span>
-                <div class="user-info">
-                    <span class="user-name">Maria Helena</span>
-                    <span class="answer-date">respondeu há 3 horas</span>
-                </div>
-            </div>
-            <div class="answer-body">
-                <p>Isso! Para complementar o que o João disse, lembre-se que o `switchMap` é muito usado em campos de busca com autocompletar, onde você só quer o resultado da ÚLTIMA coisa que o usuário digitou.</p>
-            </div>
-            <div class="answer-footer">
-                <button class="action-btn"><i class="fas fa-thumbs-up"></i> Agradecer</button>
-            </div>
+              @if (canDeleteResponse(response)) {
+                <button mat-icon-button (click)="deleteResponse(response.id)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              }
+            </mat-card-header>
+
+            <mat-card-content>
+              <div class="answer-body">
+                <p>{{ response.content }}</p>
+              </div>
+            </mat-card-content>
+
+            <mat-card-actions>
+              <button mat-button (click)="toggleReplyForm(response.id)">
+                <mat-icon>reply</mat-icon>
+                Responder
+              </button>
+            </mat-card-actions>
+
+            <!-- Formulário de Reply -->
+            @if (isReplyFormVisible(response.id) && getReplyForm(response.id)) {
+              <div class="reply-form">
+                <form [formGroup]="getReplyForm(response.id)!" (ngSubmit)="submitReply(response)">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Sua resposta</mat-label>
+                    <textarea
+                      matInput
+                      formControlName="content"
+                      rows="3"
+                      placeholder="Digite sua resposta">
+                    </textarea>
+                  </mat-form-field>
+
+                  <div class="form-actions">
+                    <button mat-button type="button" (click)="toggleReplyForm(response.id)">
+                      Cancelar
+                    </button>
+                    <button mat-raised-button color="primary" type="submit">
+                      Enviar
+                    </button>
+                  </div>
+                </form>
+              </div>
+            }
+
+            <!-- Respostas Aninhadas (Child Responses) -->
+            @if (response.childResponses && response.childResponses.length > 0) {
+              <div class="child-responses">
+                @for (childResponse of response.childResponses; track childResponse.id) {
+                  <article class="answer-item child-answer">
+                    <mat-card>
+                      <mat-card-header>
+                        <div class="user-avatar">{{ childResponse.user.name.charAt(0).toUpperCase() }}</div>
+                        <div class="user-info">
+                          <span class="user-name">{{ childResponse.user.name }}</span>
+                          @if (childResponse.user.role === 'ROLE_INSTRUCTOR') {
+                            <mat-chip class="user-role instructor">INSTRUTOR</mat-chip>
+                          }
+                          <span class="answer-date">respondeu {{ formatDate(childResponse.creationDate) }}</span>
+                        </div>
+
+                        @if (canDeleteResponse(childResponse)) {
+                          <button mat-icon-button (click)="deleteResponse(childResponse.id)">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        }
+                      </mat-card-header>
+
+                      <mat-card-content>
+                        <div class="answer-body">
+                          <p>{{ childResponse.content }}</p>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  </article>
+                }
+              </div>
+            }
+          </mat-card>
         </article>
+      }
     </section>
 
     <section class="new-answer-form">
-        <h3>Sua Resposta</h3>
-        <textarea placeholder="Digite sua contribuição ou solução aqui..." rows="5"></textarea>
-        <button class="btn-submit-answer">Enviar Resposta</button>
-    </section>
+      <h3>Sua Resposta</h3>
+      <form [formGroup]="newAnswerForm" (ngSubmit)="submitAnswer()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Digite sua contribuição ou solução aqui</mat-label>
+          <textarea
+            matInput
+            formControlName="content"
+            rows="5"
+            placeholder="Compartilhe seu conhecimento">
+          </textarea>
+          <mat-error *ngIf="newAnswerForm.get('content')?.hasError('required')">
+            Digite uma resposta
+          </mat-error>
+        </mat-form-field>
 
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="btn-submit-answer">
+          Enviar Resposta
+        </button>
+      </form>
+    </section>
+  }
 </div>

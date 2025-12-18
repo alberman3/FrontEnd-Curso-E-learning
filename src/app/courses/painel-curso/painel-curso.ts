@@ -334,4 +334,24 @@ export class PainelCurso implements OnInit {
   goBack(): void {
     this.router.navigate(['/cursos']);
   }
+
+goToForum(): void {
+  const course = this.course();
+  if (!course) {
+    return;
+  }
+
+  this.router.navigate(
+    ['/cursos/forum'],
+    { queryParams: { courseId: course.id } }
+  );
+}
+
+
+goToReview(): void {
+  const course = this.course();
+  if (course) {
+    this.router.navigate(['/avaliar-curso'], { queryParams: { courseId: course.id } });
+  }
+}
 }

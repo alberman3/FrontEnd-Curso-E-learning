@@ -22,6 +22,27 @@
         <div class="course-title-header">
           <h1>{{ course()!.title }}</h1>
           <p>{{ course()!.description }}</p>
+
+          <!-- Botões de Fórum e Avaliação -->
+          @if (isEnrolled()) {
+            <div class="course-actions">
+              <button
+                mat-raised-button
+                color="accent"
+                (click)="goToForum()">
+                <mat-icon>forum</mat-icon>
+                Fórum de Dúvidas
+              </button>
+
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="goToReview()">
+                <mat-icon>star</mat-icon>
+                Avaliar Curso
+              </button>
+            </div>
+          }
         </div>
       }
     </header>

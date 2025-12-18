@@ -1,40 +1,140 @@
 <div class="home-container">
-
-  <div class="hero">
-    <h1>Plataforma E-learning</h1>
-    <p>Aprenda, ensine e acompanhe seu progresso em um só lugar.</p>
-  </div>
-
-  <div class="card">
-    <h2>Avaliar do Curso</h2>
-    <p>Dê uma nota</p>
-
-    <div class="star-rating">
-      <span class="star" (click)="setRating(1)" [class.filled]="rating >= 1">&#9733;</span>
-      <span class="star" (click)="setRating(2)" [class.filled]="rating >= 2">&#9733;</span>
-      <span class="star" (click)="setRating(3)" [class.filled]="rating >= 3">&#9733;</span>
-      <span class="star" (click)="setRating(4)" [class.filled]="rating >= 4">&#9733;</span>
-      <span class="star" (click)="setRating(5)" [class.filled]="rating >= 5">&#9733;</span>
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Carregando...</p>
+    </div>
+  } @else {
+    <div class="hero">
+      <h1>Avaliar Curso</h1>
+      @if (course()) {
+        <p>{{ course()!.title }}</p>
+      }
     </div>
 
-    <button
-      mat-raised-button
-      class="rounded-btn"
-      color="primary">
-      Confirmar
-    </button>
+    <!-- Formulário de Avaliação -->
+    @if (!hasReviewed()) {
+      <mat-card class="card">
+        <mat-card-header>
+          <mat-card-title>Deixe sua Avaliação</mat-card-title>
+          <mat-card-subtitle>Compartilhe sua experiência com outros alunos</mat-card-subtitle>
+        </mat-card-header>
 
-    <button
-      mat-raised-button
-      class="rounded-btn"
-      color="primary">
-      Cancelar
-    </button>
-  </div>
+        <mat-card-content>
+          <form [formGroup]="reviewForm" (ngSubmit)="submitReview()">
+            <div class="rating-section">
+              <p class="rating-label">Dê uma nota de 1 a 5 estrelas:</p>
+              <div class="star-rating">
+                @for (star of [1, 2, 3, 4, 5]; track star) {
+                  <span
+                    class="star"
+                    [class.filled]="rating() >= star"
+                    (click)="setRating(star)"
+                    role="button"
+                    tabindex="0"
+                    [attr.aria-label]="'Dar nota ' + star">
+                    &#9733;
+                  </span>
+                }
+              </div>
+              <p class="rating-value">{{ rating() > 0 ? rating() + ' estrela(s)' : 'Nenhuma nota selecionada' }}</p>
+            </div>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Comentário (opcional)</mat-label>
+              <textarea
+                matInput
+                formControlName="comment"
+                rows="4"
+                placeholder="Conte como foi sua experiência com este curso">
+              </textarea>
+              <mat-hint>Máximo de 500 caracteres</mat-hint>
+              <mat-error *ngIf="reviewForm.get('comment')?.hasError('maxlength')">
+                Comentário muito longo
+              </mat-error>
+            </mat-form-field>
+
+            <div class="form-actions">
+              <button
+                mat-raised-button
+                type="button"
+                (click)="cancel()">
+                Cancelar
+              </button>
+              <button
+                mat-raised-button
+                color="primary"
+                type="submit">
+                Enviar Avaliação
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    } @else {
+      <mat-card class="card info-card">
+        <mat-card-content>
+          <mat-icon color="primary">check_circle</mat-icon>
+          <p>Você já avaliou este curso. Obrigado pelo seu feedback!</p>
+          <button mat-raised-button (click)="cancel()">
+            Voltar ao Curso
+          </button>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- Avaliações Existentes -->
+    @if (reviews().length > 0) {
+      <section class="reviews-section">
+        <h2>Avaliações do Curso</h2>
+
+        <div class="average-rating">
+          <div class="rating-summary">
+            <span class="average-number">{{ averageRating() }}</span>
+            <div class="stars-display">
+              @for (filled of getStarArray(getRoundedAverageRating()); track $index) {
+                <span class="star" [class.filled]="filled">&#9733;</span>
+              }
+            </div>
+            <span class="review-count">{{ reviews().length }} avaliações</span>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="reviews-list">
+          @for (review of reviews(); track review.id) {
+            <mat-card class="review-item">
+              <mat-card-header>
+                <div class="reviewer-avatar">
+                  {{ review.studentName.charAt(0).toUpperCase() }}
+                </div>
+                <div class="reviewer-info">
+                  <span class="reviewer-name">{{ review.studentName }}</span>
+                  <div class="review-stars">
+                    @for (star of [1, 2, 3, 4, 5]; track star) {
+                      <span class="star" [class.filled]="star <= review.rating">
+                        &#9733;
+                      </span>
+                    }
+                  </div>
+                  <span class="review-date">{{ formatDate(review.reviewDate) }}</span>
+                </div>
+              </mat-card-header>
+
+              @if (review.comment) {
+                <mat-card-content>
+                  <p class="review-comment">{{ review.comment }}</p>
+                </mat-card-content>
+              }
+            </mat-card>
+          }
+        </div>
+      </section>
+    }
+  }
 
   <footer class="footer">
     © Plataforma E-learning
   </footer>
-
 </div>
-

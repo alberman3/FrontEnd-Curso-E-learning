@@ -1,82 +1,127 @@
 <div class="forum-container">
-    <header class="forum-header">
+  <header class="forum-header">
+    <button
+      type="button"
+      class="btn-back"
+      (click)="goBack()"
+      aria-label="Voltar">
+      <mat-icon>arrow_back</mat-icon>
+      <span>Voltar</span>
+    </button>
 
+    <h1>Fórum de Dúvidas do Curso</h1>
 
-    <header class="course-header">
-  <button
-    type = "button"
-    class="btn-new-question"
-    routerLink="/cursos"
-    aria-label="Voltar para o painel de cursos">
-    <i class="fas fa-arrow-left" aria-hidden="true"></i>
-    <span>Voltar para cursos</span>
-  </button>
+    <div class="forum-actions">
+      <button
+        mat-raised-button
+        color="primary"
+        class="btn-new-question"
+        (click)="toggleNewTopicForm()">
+        <mat-icon>add_circle</mat-icon>
+        Fazer uma Pergunta
+      </button>
 
-</header>
-        <h1>Fórum de Dúvidas do Curso</h1>
-        <div class="forum-actions">
-            <button class="btn-new-question">
-                <i class="fas fa-plus-circle"></i> Fazer uma Pergunta
+      <mat-form-field appearance="outline" class="filter-select">
+        <mat-label>Filtrar por</mat-label>
+        <mat-select
+          [value]="filterType()"
+          (selectionChange)="onFilterChange($event)">
+          <mat-option value="recent">Mais Recentes</mat-option>
+          <mat-option value="unanswered">Sem Resposta</mat-option>
+          <mat-option value="popular">Mais Populares</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </header>
+
+  <!-- Formulário de Novo Tópico -->
+  @if (showNewTopicForm()) {
+    <mat-card class="new-topic-form">
+      <mat-card-header>
+        <mat-card-title>Nova Pergunta</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="newTopicForm" (ngSubmit)="createTopic()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Título</mat-label>
+            <input matInput formControlName="title" placeholder="Digite o título da sua dúvida">
+            <mat-error *ngIf="newTopicForm.get('title')?.hasError('required')">
+              Título é obrigatório
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descrição</mat-label>
+            <textarea
+              matInput
+              formControlName="content"
+              rows="5"
+              placeholder="Descreva sua dúvida em detalhes">
+            </textarea>
+            <mat-error *ngIf="newTopicForm.get('content')?.hasError('required')">
+              Descrição é obrigatória
+            </mat-error>
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button mat-button type="button" (click)="toggleNewTopicForm()">
+              Cancelar
             </button>
-            <select class="filter-select">
-                <option value="recent">Mais Recentes</option>
-                <option value="unanswered">Sem Resposta</option>
-                <option value="popular">Mais Populares</option>
-            </select>
-        </div>
-    </header>
+            <button mat-raised-button color="primary" type="submit">
+              Publicar Pergunta
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
 
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Carregando tópicos...</p>
+    </div>
+  }
+
+  <!-- Lista de Tópicos -->
+  @if (!isLoading()) {
     <main class="question-list">
-
-        <article class="question-item">
-            <div class="status-indicator status-resolved"></div> <div class="question-content">
-                <a href="#" class="question-title">
-                    Como faço para usar o operador 'switchMap' corretamente em um fluxo RxJS?
-                </a>
-                <p class="question-metadata">
-                    Postado por: **Carlos Eduardo** | Há 2 horas | Módulo 5: RxJS Avançado
-                </p>
+      @if (filteredTopics().length === 0) {
+        <div class="empty-state">
+          <mat-icon>forum</mat-icon>
+          <h3>Nenhum tópico encontrado</h3>
+          <p>Seja o primeiro a fazer uma pergunta!</p>
+        </div>
+      } @else {
+        @for (topic of filteredTopics(); track topic.id) {
+          <article class="question-item" (click)="goToTopic(topic.id)">
+            <div class="status-indicator"
+                 [class.status-resolved]="getResponseCount(topic) > 0"
+                 [class.status-unanswered]="getResponseCount(topic) === 0">
             </div>
-
-            <div class="question-stats">
-                <span class="stat-count">12</span>
-                <span class="stat-label">Respostas</span>
-            </div>
-
-            <div class="question-stats last-activity">
-                <span class="stat-count">Hoje</span>
-                <span class="stat-label">Última Atividade</span>
-            </div>
-        </article>
-
-        <article class="question-item">
-            <div class="status-indicator status-unanswered"></div>
 
             <div class="question-content">
-                <a href="#" class="question-title">
-                    Erro de CORS ao tentar consumir API externa, o que pode ser?
-                </a>
-                <p class="question-metadata">
-                    Postado por: **Mariana Silva** | Há 1 dia | Módulo 2: Integração com APIs
-                </p>
+              <h3 class="question-title">{{ topic.title }}</h3>
+              <p class="question-metadata">
+                Postado por: <strong>{{ topic.user.name }}</strong> |
+                {{ formatDate(topic.creationDate) }} |
+                {{ topic.courseTitle }}
+              </p>
             </div>
 
             <div class="question-stats">
-                <span class="stat-count">0</span>
-                <span class="stat-label">Respostas</span>
+              <span class="stat-count">{{ getResponseCount(topic) }}</span>
+              <span class="stat-label">Respostas</span>
             </div>
 
             <div class="question-stats last-activity">
-                <span class="stat-count">1 dia</span>
-                <span class="stat-label">Última Atividade</span>
+              <span class="stat-count">{{ getLastActivityDate(topic) }}</span>
+              <span class="stat-label">Última Atividade</span>
             </div>
-        </article>
-
-        </main>
-
-    <footer class="forum-footer">
-        <button class="btn-pagination">Página Anterior</button>
-        <span class="page-info">Página 1 de 5</span>
-        <button class="btn-pagination">Próxima Página</button>
-    </footer>
+          </article>
+        }
+      }
+    </main>
+  }
 </div>

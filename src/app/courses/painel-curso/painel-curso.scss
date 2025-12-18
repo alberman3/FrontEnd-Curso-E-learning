@@ -473,3 +473,31 @@
 .lesson-item.completed mat-checkbox {
   animation: check-success 0.3s ease-in-out;
 }
+
+.course-title-header {
+  .course-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .course-title-header {
+    .course-actions {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}
