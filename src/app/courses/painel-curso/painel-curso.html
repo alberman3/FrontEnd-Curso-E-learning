@@ -140,6 +140,24 @@
                 mode="determinate"
                 [value]="progress()">
               </mat-progress-bar>
+
+              <!-- Botão de Certificado -->
+              @if (canIssueCertificate()) {
+                <button
+                  mat-raised-button
+                  color="accent"
+                  class="certificate-button"
+                  (click)="downloadCertificate()"
+                  [disabled]="isDownloadingCertificate()">
+                  @if (isDownloadingCertificate()) {
+                    <mat-spinner diameter="20"></mat-spinner>
+                    <span>Baixando...</span>
+                  } @else {
+                    <mat-icon>workspace_premium</mat-icon>
+                    <span>Emitir Certificado</span>
+                  }
+                </button>
+              }
             </div>
           }
         </div>
@@ -163,6 +181,7 @@
                     class="lesson-item"
                     [class.active]="currentLesson()?.id === lesson.id"
                     [class.locked]="!canAccessLesson(lesson)"
+                    [class.completed]="completedLessons().has(lesson.id)"
                     [disabled]="!canAccessLesson(lesson)"
                     (click)="selectLesson(lesson)"
                     [attr.aria-label]="'Aula ' + lesson.order + ': ' + lesson.title + (completedLessons().has(lesson.id) ? ' - Concluída' : '')">

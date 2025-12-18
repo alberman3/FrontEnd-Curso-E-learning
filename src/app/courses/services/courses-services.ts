@@ -43,6 +43,13 @@ export interface StudentCourse {
   completed: boolean;
 }
 
+export interface CompletedLessonResponse {
+  id: number;
+  lesson: Aula;
+  completionDate: string;
+  overallProgress: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -92,17 +99,15 @@ export class CoursesService {
 }
 
   // ========== MÓDULOS ==========
- getModulesByCourse(courseId: number) {
-  return this.http.get<Modulo[]>(
-    `/courses/${courseId}/modules`
-  );
-}
-createModule(courseId: number, payload: CreateModuleRequest) {
-  return this.http.post(
-    `/courses/${courseId}/modules/create`,
-    payload
-  );
-}
+ getModulesByCourse(courseId: number): Observable<Modulo[]> {
+    return this.http.get<Modulo[]>(`${this.API_BASE}/${courseId}/modules`);
+  }
+createModule(courseId: number, payload: CreateModuleRequest): Observable<Modulo> {
+    return this.http.post<Modulo>(
+      `${this.API_BASE}/${courseId}/modules/create`,
+      payload
+    );
+  }
 
 
   /***
@@ -115,78 +120,92 @@ createModule(courseId: number, payload: CreateModuleRequest) {
 }
    */
 
-  updateModule(id: number, module: CreateModuleRequest): Observable<Modulo> {
-    return this.http.put<Modulo>(`${this.API_BASE}/modules/${id}`, module);
+  updateModule(courseId: number, moduleId: number, module: CreateModuleRequest): Observable<Modulo> {
+    return this.http.put<Modulo>(
+      `${this.API_BASE}/${courseId}/modules/${moduleId}`,
+      module
+    );
   }
 
-  deleteModule(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.API_BASE}/modules/${id}`);
+  deleteModule(courseId: number, moduleId: number): Observable<void> {
+    return this.http.delete<void>(
+      `${this.API_BASE}/${courseId}/modules/${moduleId}`
+    );
   }
 
   // ========== AULAS ==========
- getLessonsByModule(courseId: number, moduleId: number) {
-  return this.http.get<Aula[]>(
-    `/courses/${courseId}/modules/${moduleId}/lessons`
-  );
-}
+ getLessonsByModule(courseId: number, moduleId: number): Observable<Aula[]> {
+    return this.http.get<Aula[]>(
+      `${this.API_BASE}/${courseId}/modules/${moduleId}/lessons`
+    );
+  }
 
 
 
  createLesson(
-  courseId: number,
-  moduleId: number,
-  payload: CreateLessonRequest
-) {
-  return this.http.post(
-    `/courses/${courseId}/modules/${moduleId}/lessons/create`,
-    payload
-  );
-}
+    courseId: number,
+    moduleId: number,
+    payload: CreateLessonRequest
+  ): Observable<Aula> {
+    return this.http.post<Aula>(
+      `${this.API_BASE}/${courseId}/modules/${moduleId}/lessons/create`,
+      payload
+    );
+  }
 
   updateLesson(
-  courseId: number,
-  moduleId: number,
-  lessonId: number,
-  lesson: CreateLessonRequest
-): Observable<Aula> {
-  return this.http.put<Aula>(
-    `${this.API_BASE}/${courseId}/modules/${moduleId}/lessons/${lessonId}`,
-    lesson
-  );
-}
+    courseId: number,
+    moduleId: number,
+    lessonId: number,
+    lesson: CreateLessonRequest
+  ): Observable<Aula> {
+    return this.http.put<Aula>(
+      `${this.API_BASE}/${courseId}/modules/${moduleId}/lessons/${lessonId}`,
+      lesson
+    );
+  }
 
 deleteLesson(
-  courseId: number,
-  moduleId: number,
-  lessonId: number
-): Observable<void> {
-  return this.http.delete<void>(
-    `${this.API_BASE}/${courseId}/modules/${moduleId}/lessons/${lessonId}`
-  );
-}
+    courseId: number,
+    moduleId: number,
+    lessonId: number
+  ): Observable<void> {
+    return this.http.delete<void>(
+      `${this.API_BASE}/${courseId}/modules/${moduleId}/lessons/${lessonId}`
+    );
+  }
 
   // ========== MATRÍCULA ==========
-enroll(courseId: number, studentId: number) {
-  return this.http.post<EnrollmentResponseDTO>(
-    '/enrollments', // Removido o /create
-    { courseId, studentId }
-  );
-}
-
- // No CoursesService
-getEnrollment(courseId: number, userId: number): Observable<EnrollmentResponseDTO | null> {
-  return this.http.get<EnrollmentResponseDTO[]>(`/enrollments/student/${userId}`)
-    .pipe(
-      map(enrollments => enrollments.find(e => e.course.id === courseId) || null)
+enroll(courseId: number, studentId: number): Observable<EnrollmentResponseDTO> {
+    return this.http.post<EnrollmentResponseDTO>(
+      '/enrollments/create',
+      { courseId, studentId }
     );
-}
+  }
+
+getEnrollment(courseId: number, userId: number): Observable<EnrollmentResponseDTO | null> {
+    return this.http.get<EnrollmentResponseDTO[]>(`/enrollments/student/${userId}`)
+      .pipe(
+        map(enrollments => enrollments.find(e => e.course.id === courseId) || null)
+      );
+  }
 
 
   // ========== PROGRESSO ==========
-  markLessonComplete(enrollmentId: number, lessonId: number): Observable<LessonProgress> {
-    return this.http.post<LessonProgress>(
-      `${this.API_BASE}/progress/complete`,
-      { enrollmentId, lessonId }
+  markLessonComplete(
+    courseId: number,
+    moduleId: number,
+    lessonId: number
+  ): Observable<CompletedLessonResponse> {
+    return this.http.post<CompletedLessonResponse>(
+      `${this.API_BASE}/${courseId}/modules/${moduleId}/lessons/${lessonId}/completed`,
+      {}
+    );
+  }
+
+  getEnrollmentProgress(enrollmentId: number): Observable<CompletedLessonResponse[]> {
+    return this.http.get<CompletedLessonResponse[]>(
+      `/enrollments/${enrollmentId}/progress`
     );
   }
 
@@ -204,6 +223,22 @@ getEnrollment(courseId: number, userId: number): Observable<EnrollmentResponseDT
     return this.http.get<any>(
       `${this.API_BASE}/${courseId}/progress/${userId}`
     );
+  }
+
+  // ========== CERTIFICADO ==========
+
+  downloadCertificate(enrollmentId: number): Observable<Blob> {
+    return this.http.get(
+      `/enrollments/${enrollmentId}/certificate`,
+      {
+        responseType: 'blob',
+        observe: 'body'
+      }
+    );
+  }
+
+  canIssueCertificate(enrollment: EnrollmentResponseDTO): boolean {
+    return enrollment.overallProgress >= 1.0 && enrollment.status === 'COMPLETED';
   }
 
   // ========== CATEGORIAS ==========

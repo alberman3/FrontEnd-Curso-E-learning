@@ -335,3 +335,141 @@
     margin-bottom: 15px;
   }
 }
+
+// Estilos adicionais para o botão de certificado e melhorias visuais
+
+.progress-section {
+  .certificate-button {
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+
+    mat-spinner {
+      margin-right: 4px;
+    }
+  }
+}
+
+.lesson-item {
+  &.completed {
+    background-color: rgba(76, 175, 80, 0.05);
+    border-left: 3px solid #4caf50;
+
+    .lesson-name {
+      color: #388e3c;
+      font-weight: 500;
+    }
+
+    mat-checkbox {
+      ::ng-deep .mdc-checkbox {
+        .mdc-checkbox__background {
+          border-color: #4caf50 !important;
+          background-color: #4caf50 !important;
+        }
+      }
+    }
+  }
+
+  &.locked {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: rgba(0, 0, 0, 0.02);
+
+    .lock-icon {
+      color: #9e9e9e;
+    }
+  }
+
+  &.active {
+    background-color: rgba(63, 81, 181, 0.08);
+    border-left: 3px solid #3f51b5;
+  }
+}
+
+.course-sidebar {
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #424242;
+
+    mat-icon {
+      color: #ffd700;
+      font-size: 20px;
+    }
+  }
+}
+
+.video-player-container {
+  iframe {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.lesson-content {
+  padding: 24px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-top: 16px;
+
+  h2 {
+    color: #212121;
+    margin-bottom: 16px;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .lesson-text {
+    color: #616161;
+    line-height: 1.6;
+    font-size: 16px;
+  }
+}
+
+// Animação de sucesso ao concluir aula
+@keyframes check-success {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.lesson-item.completed mat-checkbox {
+  animation: check-success 0.3s ease-in-out;
+}

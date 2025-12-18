@@ -46,9 +46,11 @@ export class PainelCurso implements OnInit {
   isLoading = signal(true);
   isEnrolled = signal(false);
   enrollmentId = signal<number | null>(null);
+  enrollment = signal<EnrollmentResponseDTO | null>(null);
 
   progress = signal(0);
   completedLessons = signal<Set<number>>(new Set());
+  isDownloadingCertificate = signal(false);
 
   safeVideoUrl = computed(() => {
     const lesson = this.currentLesson();
@@ -56,6 +58,11 @@ export class PainelCurso implements OnInit {
     return this.sanitizer.bypassSecurityTrustResourceUrl(
       this.getEmbedUrl(lesson.videoUrl)
     );
+  });
+
+  canIssueCertificate = computed(() => {
+    const enroll = this.enrollment();
+    return enroll && this.coursesService.canIssueCertificate(enroll);
   });
 
   constructor(
@@ -107,9 +114,10 @@ export class PainelCurso implements OnInit {
           );
 
           if (this.isEnrolled()) {
-            const firstLesson = modulesWithLessons[0]?.lessons?.[0];
-            if (firstLesson) {
-              this.selectLesson(firstLesson);
+            this.loadCompletedLessons();
+            const firstAccessibleLesson = this.findFirstAccessibleLesson();
+            if (firstAccessibleLesson) {
+              this.selectLesson(firstAccessibleLesson);
             }
           }
         });
@@ -126,11 +134,13 @@ export class PainelCurso implements OnInit {
     }
 
     this.coursesService.getEnrollment(courseId, userId).subscribe({
-      next: (enrollment: EnrollmentResponseDTO | null) => {
-        if (enrollment) {
+      next: (enrollmentData: EnrollmentResponseDTO | null) => {
+        if (enrollmentData) {
           this.isEnrolled.set(true);
-          this.enrollmentId.set(enrollment.id);
-          this.loadProgress(enrollment.id);
+          this.enrollmentId.set(enrollmentData.id);
+          this.enrollment.set(enrollmentData);
+          this.progress.set(Math.round(enrollmentData.overallProgress * 100));
+          this.loadCompletedLessons();
         }
         this.isLoading.set(false);
       },
@@ -141,31 +151,25 @@ export class PainelCurso implements OnInit {
     });
   }
 
-  loadProgress(enrollmentId: number): void {
-    this.coursesService.getLessonProgress(enrollmentId).subscribe({
-      next: progressList => {
-        const completed = new Set(
-          progressList.filter(p => p.completed).map(p => p.lessonId)
-        );
-        this.completedLessons.set(completed);
-        this.calculateProgress();
-      },
-      error: err => console.error('Erro ao carregar progresso:', err)
-    });
+  loadCompletedLessons(): void {
+    const enroll = this.enrollment();
+    if (!enroll || !enroll.completedLessons) return;
+
+    const completed = new Set(
+      enroll.completedLessons.map(cl => cl.lesson.id)
+    );
+    this.completedLessons.set(completed);
   }
 
-  calculateProgress(): void {
-    const allLessons = this.modules().flatMap(m => m.lessons ?? []);
-    if (!allLessons.length) {
-      this.progress.set(0);
-      return;
+  findFirstAccessibleLesson(): Aula | null {
+    for (const mod of this.modules()) {
+      for (const lesson of mod.lessons ?? []) {
+        if (this.canAccessLesson(lesson)) {
+          return lesson;
+        }
+      }
     }
-
-    const completedCount = allLessons.filter(l =>
-      this.completedLessons().has(l.id)
-    ).length;
-
-    this.progress.set(Math.round((completedCount / allLessons.length) * 100));
+    return null;
   }
 
   enroll(): void {
@@ -183,9 +187,10 @@ export class PainelCurso implements OnInit {
     }
 
     this.coursesService.enroll(course.id, userId).subscribe({
-      next: (enrollment: EnrollmentResponseDTO) => {
+      next: (enrollmentData: EnrollmentResponseDTO) => {
         this.isEnrolled.set(true);
-        this.enrollmentId.set(enrollment.id);
+        this.enrollmentId.set(enrollmentData.id);
+        this.enrollment.set(enrollmentData);
 
         this.snackBar.open('Matrícula realizada com sucesso!', 'OK', { duration: 2000 });
 
@@ -210,43 +215,111 @@ export class PainelCurso implements OnInit {
   }
 
   toggleLessonComplete(lesson: Aula, event: MatCheckboxChange): void {
-    const enrollmentId = this.enrollmentId();
-    if (!enrollmentId || !event.checked) return;
+    event.source.checked = this.completedLessons().has(lesson.id);
 
-    if (!this.completedLessons().has(lesson.id)) {
-      this.coursesService.markLessonComplete(enrollmentId, lesson.id).subscribe({
-        next: () => {
-          const updated = new Set(this.completedLessons());
-          updated.add(lesson.id);
-          this.completedLessons.set(updated);
-          this.calculateProgress();
-        },
-        error: err => console.error('Erro ao marcar aula:', err)
-      });
+    if (!event.checked || this.completedLessons().has(lesson.id)) {
+      return;
     }
+
+    const course = this.course();
+    if (!course) return;
+
+    const currentModule = this.modules().find(m => m.id === lesson.moduleId);
+    if (!currentModule) return;
+
+    this.coursesService.markLessonComplete(course.id, currentModule.id, lesson.id).subscribe({
+      next: (response) => {
+        const updated = new Set(this.completedLessons());
+        updated.add(lesson.id);
+        this.completedLessons.set(updated);
+
+        this.progress.set(Math.round(response.overallProgress * 100));
+
+        event.source.checked = true;
+
+        this.snackBar.open('Aula concluída!', 'OK', { duration: 2000 });
+
+        this.checkEnrollment(course.id);
+
+        if (response.overallProgress >= 1.0) {
+          this.snackBar.open(
+            '🎉 Parabéns! Você concluiu o curso! Agora pode emitir seu certificado.',
+            'Fechar',
+            { duration: 5000 }
+          );
+        }
+      },
+      error: err => {
+        console.error('Erro ao marcar aula:', err);
+        event.source.checked = false;
+
+        const errorMsg = err.error?.message || 'Erro ao concluir aula';
+        this.snackBar.open(errorMsg, 'Fechar', { duration: 3000 });
+      }
+    });
   }
 
   canAccessLesson(lesson: Aula): boolean {
+    if (!this.isEnrolled()) return false;
+
     const modules = this.modules();
     const currentModule = modules.find(m => m.id === lesson.moduleId);
     if (!currentModule) return false;
 
     if (currentModule.order === 1 && lesson.order === 1) return true;
-    if (!this.isEnrolled()) return false;
 
     for (const mod of modules) {
       if (mod.order < currentModule.order) {
-        if (!mod.lessons?.every(l => this.completedLessons().has(l.id))) {
+        const allCompleted = mod.lessons?.every(l => this.completedLessons().has(l.id)) ?? false;
+        if (!allCompleted) {
           return false;
         }
       } else if (mod.order === currentModule.order) {
         const previous = mod.lessons?.filter(l => l.order < lesson.order) ?? [];
-        if (!previous.every(l => this.completedLessons().has(l.id))) {
+        const allPreviousCompleted = previous.every(l => this.completedLessons().has(l.id));
+        if (!allPreviousCompleted) {
           return false;
         }
       }
     }
     return true;
+  }
+
+  downloadCertificate(): void {
+    const enrollId = this.enrollmentId();
+    if (!enrollId) {
+      this.snackBar.open('Matrícula não encontrada', 'Fechar', { duration: 3000 });
+      return;
+    }
+
+    if (!this.canIssueCertificate()) {
+      this.snackBar.open('Complete o curso para emitir o certificado', 'Fechar', { duration: 3000 });
+      return;
+    }
+
+    this.isDownloadingCertificate.set(true);
+
+    this.coursesService.downloadCertificate(enrollId).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `certificado_curso_${this.course()?.id || 'desconhecido'}.pdf`;
+        link.click();
+
+        window.URL.revokeObjectURL(url);
+
+        this.isDownloadingCertificate.set(false);
+        this.snackBar.open('Certificado baixado com sucesso!', 'OK', { duration: 3000 });
+      },
+      error: err => {
+        console.error('Erro ao baixar certificado:', err);
+        this.isDownloadingCertificate.set(false);
+
+        const errorMsg = err.error?.message || 'Erro ao baixar certificado';
+        this.snackBar.open(errorMsg, 'Fechar', { duration: 3000 });
+      }
+    });
   }
 
   getEmbedUrl(url: string): string {
