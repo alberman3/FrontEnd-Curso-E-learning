@@ -6,7 +6,7 @@ import { Modulo } from '../model/modulo';
 import { Aula } from '../model/aula';
 import { LessonProgress } from '../model/lesson-progress';
 import { EnrollmentResponseDTO } from '../model/enrollment';
-
+import { map } from 'rxjs/operators';
 
 export interface CreateCourseRequest {
   title: string;
@@ -40,7 +40,6 @@ export interface CreateLessonRequest {
 export interface StudentCourse {
   course: Course;
   progress: number;
-  enrolledAt: string;
   completed: boolean;
 }
 
@@ -76,9 +75,21 @@ export class CoursesService {
     return this.http.get<Course[]>(`${this.API_BASE}/instructor/${instructorId}`);
   }
 
-  getStudentCourses(studentId: number): Observable<StudentCourse[]> {
-    return this.http.get<StudentCourse[]>(`${this.API_BASE}/student/${studentId}`);
-  }
+ getStudentCourses(studentId: number) {
+  return this.http
+    .get<EnrollmentResponseDTO[]>(`/enrollments/student/${studentId}`)
+    .pipe(
+      map(enrollments =>
+        enrollments.map(e => ({
+          // 🔥 CLONE DO COURSE (resolve o bug do id fixo)
+          course: { ...e.course },
+
+          progress: Math.round(e.overallProgress * 100),
+          completed: e.status === 'COMPLETED'
+        }))
+      )
+    );
+}
 
   // ========== MÓDULOS ==========
  getModulesByCourse(courseId: number) {
