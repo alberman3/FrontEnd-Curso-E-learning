@@ -67,8 +67,8 @@
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Tipo de Usuário</mat-label>
           <mat-select formControlName="role" [disabled]="isLoading">
-            <mat-option value="ROLE_STUDENT">Aluno</mat-option>
-            <mat-option value="ROLE_INSTRUCTOR">Instrutor</mat-option>
+            <mat-option value="STUDENT">Aluno</mat-option>
+            <mat-option value="INSTRUCTOR">Instrutor</mat-option>
           </mat-select>
           <mat-error *ngIf="form.get('role')?.hasError('required')">
             Tipo de usuário é obrigatório
