@@ -94,7 +94,7 @@ export class CadastroModulo implements OnInit {
     const payload: CreateModuleRequest = {
   title: this.form.value.title,
   description: this.form.value.description,
-  order: this.form.value.order,
+  moduleOrder: this.form.value.order,
   courseId: this.courseId
 };
 

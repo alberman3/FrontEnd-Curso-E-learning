@@ -22,7 +22,7 @@ export interface CreateCourseRequest {
 export interface CreateModuleRequest {
   title: string;
   description: string;
-  order: number;
+  moduleOrder: number;
   courseId: number;
 
 }
@@ -98,7 +98,7 @@ export class CoursesService {
 
   // ========== MÓDULOS ==========
  getModulesByCourse(courseId: number): Observable<Modulo[]> {
-    return this.http.get<Modulo[]>(`${this.API_BASE}/${courseId}/modules`);
+    return this.http.get<Modulo[]>(`${this.API_BASE}/${courseId}/moduled`);
   }
 createModule(courseId: number, payload: CreateModuleRequest): Observable<Modulo> {
     return this.http.post<Modulo>(
